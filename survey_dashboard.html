@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>직업기초능력평가 설문조사 응답결과</title>
+<style>
+  :root{
+    --navy:#16385c; --navy2:#2d5f8f; --ink:#22303d; --muted:#5b6b7a;
+    --line:#d5dde6; --card:#ffffff; --bg:#f2f5f8; --accent:#b06a2c;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink);
+       font-family:"Malgun Gothic","맑은 고딕",-apple-system,sans-serif; font-size:13px; line-height:1.65;}
+  .wrap{max-width:1200px; margin:0 auto; padding:0 20px 64px;}
+  /* Header */
+  header.top{
+    background:linear-gradient(135deg,#4a2c10 0%,#7a4a1e 55%,#12304e 100%); color:#fff;
+    padding:34px 0 30px; margin-bottom:26px;
+  }
+  header.top .wrap{padding-bottom:0;}
+  header.top h1{margin:0 0 6px; font-size:25px; letter-spacing:-0.5px;}
+  header.top .sub{opacity:.9; font-size:13.5px;}
+  header.top .meta{margin-top:14px; font-size:12.5px; opacity:.85;}
+  header.top .meta b{color:#ffd9a8; font-weight:600;}
+  a.backlink{display:inline-block; margin-top:12px; padding:6px 14px; border:1px solid rgba(255,255,255,.5);
+             border-radius:20px; color:#fff; text-decoration:none; font-size:12px;}
+  a.backlink:hover{background:rgba(255,255,255,.12);}
+  /* KPI */
+  .kpi-row{display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin:-46px 0 30px;}
+  .kpi{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 16px 14px;
+       box-shadow:0 4px 16px rgba(20,45,75,.08);}
+  .kpi .lab{font-size:12px; color:var(--muted); margin-bottom:8px; min-height:32px;}
+  .kpi .val{font-size:30px; font-weight:700; color:var(--navy); letter-spacing:-1px; line-height:1;}
+  .kpi .val small{font-size:15px; font-weight:600; margin-left:1px;}
+  .kpi .foot{font-size:10.5px; color:#9aa7b4; margin-top:7px;}
+  .kpi.primary{background:linear-gradient(135deg,#7a4a1e,#4a2c10); border:none;}
+  .kpi.primary .lab,.kpi.primary .foot{color:#f0dcc8;}
+  .kpi.primary .val{color:#fff;}
+  /* Section */
+  section.block{background:var(--card); border:1px solid var(--line); border-radius:14px;
+                padding:22px 24px 26px; margin-bottom:24px; box-shadow:0 2px 8px rgba(20,45,75,.04);}
+  .sec-h{display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+         border-bottom:2px solid var(--accent); padding-bottom:10px; margin-bottom:6px;}
+  .sec-h h2{margin:0; font-size:19px; color:var(--navy);}
+  .sec-h .unit{font-size:12px; color:var(--muted); white-space:nowrap;}
+  .sec-purpose{color:var(--muted); font-size:12.5px; margin:8px 0 18px;}
+  .sub-h{font-size:15px; font-weight:700; color:var(--ink); margin:26px 0 10px;
+         padding-left:10px; border-left:4px solid var(--accent);}
+  .sub-h:first-of-type{margin-top:14px;}
+  .narr{background:#faf5ee; border:1px solid #ecdcc8; border-left:4px solid var(--accent);
+        border-radius:8px; padding:12px 14px; margin:14px 0; font-size:12.8px; color:#4a3a28;}
+  .narr b{color:#7a4a1e;}
+  .cg{display:grid; grid-template-columns:1.15fr .85fr; gap:22px; align-items:start;}
+  .cg .chartbox{min-width:0;}
+  .chart-holder{position:relative; width:100%;}
+  /* tables */
+  table.dt{width:100%; border-collapse:collapse; font-size:11.8px; margin-top:2px;}
+  table.dt th,table.dt td{border:1px solid var(--line); padding:5px 7px; text-align:center;}
+  table.dt thead th{background:#f2e9dd; color:#5c3a18; font-weight:700;}
+  table.dt tbody th{background:#f5f0e8; color:var(--ink); font-weight:600; text-align:left; white-space:nowrap;}
+  table.dt tbody tr:nth-child(even) td{background:#fbfaf7;}
+  table.dt td.hi{font-weight:700; color:var(--navy);}
+  .tbl-cap{font-size:12px; font-weight:700; color:var(--muted); margin:4px 0 6px;}
+  .note-fn{font-size:11px; color:#8a97a4; margin-top:10px; line-height:1.7;}
+  .legend{display:flex; flex-wrap:wrap; gap:10px 14px; margin-top:8px; font-size:11.5px; color:var(--muted);}
+  .legend .it{display:flex; align-items:center; gap:5px;}
+  .legend .sw{width:12px; height:12px; border-radius:3px; display:inline-block; border:1px solid rgba(0,0,0,.12);}
+  .badge{display:inline-block; background:#f5f0e8; border:1px solid #e2d4c0; border-radius:6px;
+         padding:5px 10px; font-size:11.5px; color:#4a3a28; margin:4px 0;}
+  .sig{font-weight:700;} .sig.s0{color:#8a97a4;} .sig.s1{color:#2d6a4f;} .sig.s2{color:#b0692c;} .sig.s3{color:#a3122e;}
+  /* 전체 메뉴 (페이지 공통) */
+  nav.topnav{position:sticky; top:0; z-index:100; background:#0e2540; box-shadow:0 2px 10px rgba(10,25,45,.3);}
+  nav.topnav .nav-wrap{max-width:1200px; margin:0 auto; padding:0 20px; display:flex; align-items:center; gap:2px; height:48px;}
+  nav.topnav .brand{color:#c9d6e4; font-size:12.5px; font-weight:700; margin-right:20px; letter-spacing:-0.3px; white-space:nowrap;}
+  nav.topnav a{color:#9fb4ca; text-decoration:none; font-size:13.5px; font-weight:600; padding:0 16px;
+               height:48px; line-height:45px; display:inline-block; border-bottom:3px solid transparent; white-space:nowrap;}
+  nav.topnav a:hover{color:#fff; background:rgba(255,255,255,.07);}
+  nav.topnav a.on{color:#fff; border-bottom-color:#ffd9a8;}
+  /* tabs */
+  .tabs{display:flex; gap:6px; flex-wrap:wrap; margin:8px 0 12px;}
+  .tab{border:1px solid var(--line); background:#fff; color:var(--muted); border-radius:20px;
+       padding:6px 16px; font-size:12.5px; cursor:pointer; font-family:inherit;}
+  .tab.on{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:700;}
+  /* segment bars */
+  .seg-row{display:flex; align-items:center; gap:10px; margin:7px 0;}
+  .seg-lab{width:150px; font-size:12px; color:var(--ink); font-weight:600; text-align:right; flex-shrink:0;}
+  .seg-bar{flex:1; display:flex; height:26px; border-radius:5px; overflow:hidden; background:#eef1f5;}
+  .seg{display:flex; align-items:center; justify-content:center; font-size:10.5px; font-weight:600; white-space:nowrap; overflow:hidden;}
+  .seg-n{width:64px; font-size:10.5px; color:#9aa7b4; flex-shrink:0;}
+  /* horizontal freq bars */
+  .hbar-row{display:flex; align-items:center; gap:10px; margin:6px 0;}
+  .hbar-lab{width:200px; font-size:12px; text-align:right; color:var(--ink); flex-shrink:0;}
+  .hbar-track{flex:1; background:#f0ece4; border-radius:4px; height:20px; position:relative;}
+  .hbar-fill{height:100%; border-radius:4px; background:linear-gradient(90deg,#c98a4e,#b06a2c);}
+  .hbar-val{width:110px; font-size:11.5px; color:var(--muted); flex-shrink:0;}
+  .panel-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+  .panel{border:1px solid var(--line); border-radius:10px; padding:14px 16px;}
+  .panel h4{margin:0 0 8px; font-size:13.5px; color:var(--navy);}
+  footer.bot{font-size:11.5px; color:#8a97a4; line-height:1.9; border-top:1px solid var(--line); padding-top:16px; margin-top:8px;}
+  .fallback{display:none; font-size:12px; color:#8a97a4; padding:10px;}
+  @media (max-width:900px){
+    .kpi-row{grid-template-columns:repeat(2,1fr);}
+    .cg{grid-template-columns:1fr;}
+    .panel-grid{grid-template-columns:1fr;}
+  }
+  /* 우측 도킹 목차 + TOP 버튼 (페이지 공통) */
+  .side-toc{position:fixed; top:50%; right:0; transform:translateY(-50%); width:184px;
+    background:rgba(255,255,255,.97); border:1px solid var(--line); border-right:none;
+    border-radius:12px 0 0 12px; padding:12px 14px;
+    box-shadow:-4px 4px 16px rgba(20,45,75,.15); font-size:11.5px; z-index:94;
+    max-height:72vh; overflow-y:auto;}
+  .side-toc .tc-t{font-weight:700; color:var(--navy); font-size:11px; margin-bottom:7px;
+    padding-bottom:6px; border-bottom:1px solid var(--line);}
+  .side-toc a{display:block; color:var(--muted); text-decoration:none; padding:4px 0 4px 9px;
+    border-left:2px solid var(--line); line-height:1.45;}
+  .side-toc a:hover{color:var(--navy);}
+  .side-toc a.on{color:var(--navy); font-weight:700; border-left-color:#b06a2c; background:#faf5ee;}
+  #topBtn{position:fixed; right:16px; bottom:26px; width:46px; height:46px; border-radius:50%;
+    background:#16385c; color:#fff; border:none; cursor:pointer; font-size:13px; font-weight:700;
+    box-shadow:0 4px 12px rgba(20,45,75,.35); display:none; z-index:95; font-family:inherit;}
+  #topBtn:hover{background:#2d5f8f;}
+  html{scroll-behavior:smooth;}
+  section.block{scroll-margin-top:60px;}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="nav-wrap">
+    <span class="brand">직업기초능력평가 대시보드</span>
+    <a href="achievement_dashboard.html">1. 성취도 결과</a>
+    <a href="survey_dashboard.html" class="on">2. 설문조사</a>
+    <a href="linked_dashboard.html">3. 종합(연계 분석)</a>
+  </div>
+</nav>
+
+<header class="top">
+  <div class="wrap">
+    <h1>직업기초능력평가 설문조사 응답결과</h1>
+    <div class="sub">평가 수행 태도 · 영역별 체감 난이도 · 평가 인식/수용성 · 운영 인식 · 개선 요구 · 응시 경험 · 직업 가치관</div>
+    <div class="meta">자료: 직업기초능력평가 모의테스트 응답자 조사 · 유효 응답자 <b>N=458</b> · 분모는 문항별 유효응답(각 표에 병기)</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- KPI -->
+  <div class="kpi-row" id="kpiRow"></div>
+
+  <!-- 0. 설문지 구성·문항 -->
+  <section class="block">
+    <div class="sec-h">
+      <h2>설문지 구성·문항</h2>
+      <span class="unit">총 33문항 (개인정보 4문항 포함)</span>
+    </div>
+    <div class="sec-purpose">이 페이지의 모든 결과가 어떤 문항에서 나왔는지 — 설문지 틀과 문항 전문. <b>개인정보 및 식별</b> 4문항 · <b>평가 경험·정책 인식</b> 14문항 · <b>진로 경력</b> 15문항</div>
+    <details>
+      <summary style="cursor:pointer;font-weight:700;color:var(--navy);font-size:13.5px;padding:6px 0">▸ 문항 전체 목록 펼치기 / 접기</summary>
+      <div style="margin-top:10px">
+      <table class="dt">
+        <thead><tr><th style="width:110px">영역</th><th style="width:70px">코드</th><th style="width:150px">지표</th><th>문항</th><th style="width:90px">응답유형</th></tr></thead>
+        <tbody>
+        <tr><th rowspan="4" style="vertical-align:middle">개인정보 및 식별</th><td style="white-space:nowrap">INFO_Q00</td><th style="font-weight:600;white-space:nowrap">수집·이용·국외이전 동의</th><td style="text-align:left">[필수] 개인정보 수집·이용 및 국외이전 동의서<br><br>귀하의 개인정보를 수집 및 이용, 그리고 국외로 이전하고자 하며, 이를 위해 다음과 같이 개인정보보호법 제15조, 제22조 및 제28조의8에 의거하여 동의를 받고자 합니다.<br><br>1. 개인정보의 수집·이용 및 국외이전 목적<br>• 설문조사 참여 확인, 응답자 식별, 경품 발송 및 안내<br><br>2. 수집하는 개인정보의 항목<br>• [필수] 성명, 연락처(휴대폰 번호)<br><br><br>3. 개인정보의 보유 및 이용 기간<br>• 설문 종료 후 3개월까지 (또는 경품 발송 완료 후 즉시 파기)<br><br>4. 개인정보의 국외 이전 항목, 국가, 시기 및 방법<br>• 이전되는 항목: 위 2번 항목<br>• 이전되는 국가: 미국 (Google 서버)<br>• 이전 시기: 설문 응답 즉시<br>• 이전 방법: 구글 폼을 통한 전자적 파일 형태의 전송<br><br>5. 개인정보를 이전받는 자의 성명(법인명) 및 연락처 <br>• 법인명: Google LLC<br>• 연락처: Google 개인정보 보호 페이지 참고<br><br>6. 동의 거부권 및 불이익<br>• 귀하는 개인정보의 수집·이용 및 국외이전에 동의하지 않을 권리가 있습니다. 단, 동의 거부 시 설문조사 참여 및 경품 지급이 제한될 수 있습니다. <span style="color:#8a97a4;font-size:10.5px">(수집 후 비식별 처리 — 분석 미사용)</span></td><td style="white-space:nowrap">단일선택</td></tr>
+<tr><td style="white-space:nowrap">INFO_Q01</td><th style="font-weight:600;white-space:nowrap">휴대전화번호</th><td style="text-align:left">휴대전화번호를 입력해 주시기 바랍니다. (예: 010-0000-0000)<br>※ ★기프티콘★ 발송을 위한 정보로만 활용됩니다. <span style="color:#8a97a4;font-size:10.5px">(수집 후 비식별 처리 — 분석 미사용)</span></td><td style="white-space:nowrap">자유응답</td></tr>
+<tr><td style="white-space:nowrap">INFO_Q02</td><th style="font-weight:600;white-space:nowrap">생년월일</th><td style="text-align:left">생년월일을 입력해 주시기 바랍니다. (YYYYMMDD) <span style="color:#8a97a4;font-size:10.5px">(수집 후 비식별 처리 — 분석 미사용)</span></td><td style="white-space:nowrap">자유응답</td></tr>
+<tr><td style="white-space:nowrap">INFO_Q03</td><th style="font-weight:600;white-space:nowrap">시험 응시 ID</th><td style="text-align:left">시험 응시 아이디를 입력해 주시기 바랍니다. <span style="color:#8a97a4;font-size:10.5px">(수집 후 비식별 처리 — 분석 미사용)</span></td><td style="white-space:nowrap">자유응답</td></tr>
+<tr><th rowspan="14" style="vertical-align:middle">평가 경험·정책 인식</th><td style="white-space:nowrap">D_Q01</td><th style="font-weight:600;white-space:nowrap">평가 성실도</th><td style="text-align:left">나는 직업기초능력평가에서 문항을 충분히 읽고 답하였다.</td><td style="white-space:nowrap">5점척도</td></tr>
+<tr><td style="white-space:nowrap">D_Q02</td><th style="font-weight:600;white-space:nowrap">평가 집중도</th><td style="text-align:left">나는 평가를 치르는 동안 집중을 유지할 수 있었다.</td><td style="white-space:nowrap">5점척도</td></tr>
+<tr><td style="white-space:nowrap">G_Q01</td><th style="font-weight:600;white-space:nowrap">평가 난이도(4)</th><td style="text-align:left">다음은 직업기초능력평가의 난이도에 대한 문항입니다.<br>각 영역의 난이도를 기준으로 응답해 주십시오.  <br>(의사소통 국어 / 의사소통 영어 / 수리활용 / 문제해결)</td><td style="white-space:nowrap">5점척도 그리드(G 묶음)</td></tr>
+<tr><td style="white-space:nowrap">G_Q02</td><th style="font-weight:600;white-space:nowrap">평가 개선 필요사항</th><td style="text-align:left">이번 직업기초능력평가에서 개선이 필요하다고 느낀 부분을 모두 선택해 주십시오.</td><td style="white-space:nowrap">복수응답</td></tr>
+<tr><td style="white-space:nowrap">G_Q03</td><th style="font-weight:600;white-space:nowrap">직무 관련성</th><td style="text-align:left">나는 직업기초능력평가 문항이 실제 직무에서 필요한 기본 능력과 관련이 있다고 생각한다.</td><td style="white-space:nowrap">5점척도</td></tr>
+<tr><td style="white-space:nowrap">G_Q04</td><th style="font-weight:600;white-space:nowrap">개선사항</th><td style="text-align:left">오늘 응시한 직업기초능력평가가 성인들에게 더 유용한 제도가 되기 위해 개선되어야 할 점이 있다면 자유롭게 서술해 주십시오.</td><td style="white-space:nowrap">서술형</td></tr>
+<tr><td style="white-space:nowrap">G_Q05</td><th style="font-weight:600;white-space:nowrap">NCS 기반 채용 인지도</th><td style="text-align:left">나는 공공기관 등에서 운영하는 NCS 기반 채용 필기전형의 직업기초능력평가에 대해 알고 있다.</td><td style="white-space:nowrap">5점척도</td></tr>
+<tr><td style="white-space:nowrap">G_Q07</td><th style="font-weight:600;white-space:nowrap">응시 의향</th><td style="text-align:left">나는 직업기초능력평가를 성인들을 대상으로 확대하여 운영한다면 응시할 의향이 있다.</td><td style="white-space:nowrap">5점척도</td></tr>
+<tr><td style="white-space:nowrap">G_Q08</td><th style="font-weight:600;white-space:nowrap">인증 활용 효용성</th><td style="text-align:left">나는 NCS 직업기초능력평가 결과가 등급제 인증 형태(예: OPIc 어학 성적)로 제공되어, 여러 기관 채용에 범용적으로 활용된다면 매우 유용할 것이라고 생각한다</td><td style="white-space:nowrap">5점척도</td></tr>
+<tr><td style="white-space:nowrap">G_Q09</td><th style="font-weight:600;white-space:nowrap">응시료 부담 방식</th><td style="text-align:left">국가 차원에서 성인 대상 직업기초능력평가가 도입된다면, 다음 응시료 중 어떠한 방식이 적절하다고 생각하시나요?</td><td style="white-space:nowrap">단일선택</td></tr>
+<tr><td style="white-space:nowrap">G_Q10</td><th style="font-weight:600;white-space:nowrap">적정 검사시간</th><td style="text-align:left">채용을 위한 시험을 치르는 상황에서 1과목(50문항)을 기준으로 검사시간은 어느정도가 적당하다고 생각하시나요?</td><td style="white-space:nowrap">단일선택</td></tr>
+<tr><td style="white-space:nowrap">N_Q01</td><th style="font-weight:600;white-space:nowrap">공공기관 채용시험 응시 경험</th><td style="text-align:left">나는 공공기관 채용시험(NCS 직업기초능력평가 포함)에 응시한 경험이 있다.<br>※ 응시 횟수·시기·결과(합격·불합격)에 관계없이 한 번이라도 응시한 경우 &quot;있다&quot;를 선택해 주십시오.</td><td style="white-space:nowrap">단일선택</td></tr>
+<tr><td style="white-space:nowrap">N_Q02</td><th style="font-weight:600;white-space:nowrap">채용시험 준비 방법</th><td style="text-align:left">공공기관 채용시험을 준비할 때 주로 활용한 방법을 모두 선택해 주십시오.</td><td style="white-space:nowrap">복수응답</td></tr>
+<tr><td style="white-space:nowrap">N_Q03</td><th style="font-weight:600;white-space:nowrap">표준화 통합 유용성</th><td style="text-align:left">나는 한 번의 NCS 직업기초능력평가 필기전형 결과를 여러 공공기관 채용 전형에 공통적으로 적용한다면, 취업 준비가 보다 수월해질 것이라고 생각한다</td><td style="white-space:nowrap">5점척도</td></tr>
+<tr><th rowspan="15" style="vertical-align:middle">진로 경력</th><td style="white-space:nowrap">F_Q01</td><th style="font-weight:600;white-space:nowrap">훈련 만족도</th><td style="text-align:left">나는 현재 참여하고 있는 훈련과정이 나의 취업·진로 준비에 도움이 된다고 생각한다.</td><td style="white-space:nowrap">5점척도</td></tr>
+<tr><td style="white-space:nowrap">F_Q02</td><th style="font-weight:600;white-space:nowrap">훈련 추천 의사</th><td style="text-align:left">나는 현재 참여하고 있는 훈련과정을 다른 사람에게 추천할 의사가 있다.</td><td style="white-space:nowrap">단일선택</td></tr>
+<tr><td style="white-space:nowrap">A_Q01</td><th style="font-weight:600;white-space:nowrap">이전 직무경험 여부</th><td style="text-align:left">나는 이전에 일한 경험이 있다.<br>※ 아르바이트, 현장실습, 인턴, 프리랜서, 자영업 경험을 모두 포함</td><td style="white-space:nowrap">단일선택</td></tr>
+<tr><td style="white-space:nowrap">A_Q02</td><th style="font-weight:600;white-space:nowrap">주된 경력 분야</th><td style="text-align:left">이전에 가장 오래 일한 경력 분야를 선택해주십시오.<br>※ 기간이 비슷한 경력이 여러 개일 경우, 가장 중요하다고 생각하는 분야 선택</td><td style="white-space:nowrap">NCS 검색/선택</td></tr>
+<tr><td style="white-space:nowrap">A_Q03</td><th style="font-weight:600;white-space:nowrap">자격증 보유 여부</th><td style="text-align:left">보유하고 계신 자격증을 모두 선택해 주십시오.<br></td><td style="white-space:nowrap">단일선택</td></tr>
+<tr><td style="white-space:nowrap">E_Q01</td><th style="font-weight:600;white-space:nowrap">진로목표 명확성</th><td style="text-align:left">나는 어떤 분야나 직무로 나아가고 싶은지 비교적 명확하게 정해져 있다.</td><td style="white-space:nowrap">5점척도</td></tr>
+<tr><td style="white-space:nowrap">E_Q02</td><th style="font-weight:600;white-space:nowrap">구직 적극성</th><td style="text-align:left">나는 6개월 이내 취업을 위해 구직활동을 적극적으로 할 계획이다.</td><td style="white-space:nowrap">5점척도</td></tr>
+<tr><td style="white-space:nowrap">E_Q03</td><th style="font-weight:600;white-space:nowrap">최근 4주 구직활동 여부</th><td style="text-align:left">나는 지난 4주 동안 일자리를 구하기 위해 적극적인 구직 활동을 한 번이라도 한 적이 있다.<br>※ 예: 구인구직 플랫폼 접속, 이력서 제출, 면접 참여 등</td><td style="white-space:nowrap">단일선택</td></tr>
+<tr><td style="white-space:nowrap">E_Q04</td><th style="font-weight:600;white-space:nowrap">현재 진로·취업 상태</th><td style="text-align:left">현재 본인의 상황과 가장 가까운 것은 무엇입니까? (1개 선택)</td><td style="white-space:nowrap">단일선택</td></tr>
+<tr><td style="white-space:nowrap">E_Q05</td><th style="font-weight:600;white-space:nowrap">구인구직 활동방법</th><td style="text-align:left">현재 취업 정보나 일자리를 알아볼 때 주로 활용하는 방법을 모두 선택해 주십시오.</td><td style="white-space:nowrap">복수응답</td></tr>
+<tr><td style="white-space:nowrap">E_Q06</td><th style="font-weight:600;white-space:nowrap">구직 활동 애로사항</th><td style="text-align:left">취업을 준비하면서 어려움을 느낀 부분을 모두 선택해 주십시오.</td><td style="white-space:nowrap">복수응답</td></tr>
+<tr><td style="white-space:nowrap">E_Q07</td><th style="font-weight:600;white-space:nowrap">희망 연봉</th><td style="text-align:left">취업 시 희망하는 연봉 수준은 어느 정도입니까?</td><td style="white-space:nowrap">단일선택</td></tr>
+<tr><td style="white-space:nowrap">E_Q08</td><th style="font-weight:600;white-space:nowrap">취업 희망 지역 1순위</th><td style="text-align:left">취업을 희망하는 지역은 어디입니까?</td><td style="white-space:nowrap">단일선택</td></tr>
+<tr><td style="white-space:nowrap">V_Q01</td><th style="font-weight:600;white-space:nowrap">직업 가치관</th><td style="text-align:left">가장 좋은 일자리(직장)라고 생각하는 것을 선택해주십시오.</td><td style="white-space:nowrap">단일선택</td></tr>
+<tr><td style="white-space:nowrap">V_Q02</td><th style="font-weight:600;white-space:nowrap">주관적 생활 만족</th><td style="text-align:left">나는 전반적으로 생활이 만족스럽다고 생각한다.</td><td style="white-space:nowrap">5점척도</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </details>
+    <div class="note-fn">개인정보 문항(INFO_*)은 수집 즉시 비식별 처리되며 분석에 사용되지 않음. 출처: 설문조사코드북.xlsx.</div>
+  </section>
+
+
+  <!-- 1. 평가 수행 태도 -->
+  <section class="block">
+    <div class="sec-h">
+      <h2>1. 평가 수행 태도</h2>
+      <span class="unit">(단위: %, 명) · N=458</span>
+    </div>
+    <div class="sec-purpose">응답자가 평가에 얼마나 성실하게 임했는가 — 성실도(읽기 노력)·집중도.</div>
+    <div class="narr"><b>성실 응답 기반 확보</b> — 성실도 긍정(그렇다+매우 그렇다) <b>95.4%</b>(평균 4.64점), 집중도 긍정 <b>85.4%</b>(평균 4.33점).
+      결과 해석의 신뢰 기반이 되는 응답 태도가 전반적으로 매우 양호함.</div>
+    <div id="attitudeBars"></div>
+    <div id="lg_likert" class="legend"></div>
+    <div class="note-fn">척도: 1=전혀 그렇지 않다 ~ 5=매우 그렇다. 막대 안 수치는 %(6% 이상만 표시), 우측은 문항 평균과 N.</div>
+  </section>
+
+  <!-- 2. 영역별 체감 난이도 (탭) -->
+  <section class="block">
+    <div class="sec-h">
+      <h2>2. 영역별 체감 난이도</h2>
+      <span class="unit">(단위: %, 명) · 영역별 N=458</span>
+    </div>
+    <div class="sec-purpose">네 영역(의사소통 국어 / 의사소통 영어 / 수리활용 / 문제해결)의 난이도를 응답자가 어떻게 체감했는가 — 탭을 눌러 영역별로 확인.</div>
+    <div class="tabs" id="tabsDiff"></div>
+    <div class="badge" id="badge_diff"></div>
+    <div class="cg">
+      <div class="chartbox">
+        <div class="chart-holder" style="height:220px"><canvas id="c_diff"></canvas></div>
+      </div>
+      <div>
+        <div class="tbl-cap" id="cap_diff"></div>
+        <div id="t_diff"></div>
+      </div>
+    </div>
+
+    <div class="sub-h">영역별 비교 (100% 누적)</div>
+    <div class="narr"><b>영어가 가장 쉽게, 문제해결이 가장 어렵게 체감됨</b><br>'쉽다+매우 쉽다' 비율: 영어 53.2% &gt; 수리 46.9% &gt; 국어 34.7% &gt; 문제해결 32.1%.
+      <br>평균(1=매우 어렵다~5=매우 쉽다): 영어 3.57 &gt; 수리 3.49 &gt; 국어 3.25 &gt; 문제해결 3.16.</div>
+    <div class="chart-holder" style="height:200px"><canvas id="c_diffAll"></canvas></div>
+    <div id="lg_diff" class="legend"></div>
+    <div class="note-fn">양극척도: 1=매우 어렵다 ~ 5=매우 쉽다(평균이 낮을수록 어렵게 체감). 체감 난이도와 실제 성취 등급의 연계 분석은
+      <a href="linked_dashboard.html" style="color:var(--accent);font-weight:600">3. 종합(연계 분석) 페이지의 5-5</a> 참조.</div>
+  </section>
+
+  <!-- 3. 평가 인식·수용성 -->
+  <section class="block">
+    <div class="sec-h">
+      <h2>3. 평가 인식·수용성</h2>
+      <span class="unit">(단위: %, 명) · 문항별 N=458</span>
+    </div>
+    <div class="sec-purpose">평가의 직무 관련성, NCS 기반 채용 인지도, 확대 도입 시 응시 의향, 인증(등급제) 효용, 표준화 통합 유용성.</div>
+    <div class="narr">
+      <b>요약</b>
+      <ul>
+        <li>직무 관련성 긍정 <b>53.9%</b>, 인증 활용 효용 긍정 <b>57.4%</b>, 표준화 통합 유용성 긍정 <b>55.0%</b>, 확대 도입 응시 의향 긍정 <b>48.9%</b><br> 수용성에 대해서는 전반적으로 긍정적인 응답이 확인됨.</li>
+        <li>반면 <b>NCS 기반 채용 인지도는 '모른다' 계열이 51.5%</b>(전혀 모른다 13.5% + 들어봤지만 잘 모른다 38.0%)로 NCS 기반 채용에 대한 인식 수준은 낮은편.</li>
+      </ul>
+    </div>
+    <div id="percepBars"></div>
+    <div id="lg_likert2" class="legend"></div>
+    <div class="tbl-cap" style="margin-top:18px">[표] 평가 인식·수용성 문항별 분포 — 비율%(빈도)</div>
+    <div id="t_percep"></div>
+    <div class="note-fn">척도: 1=전혀 그렇지 않다 ~ 5=매우 그렇다. NCS 인지도만 1=전혀 모른다 ~ 5=매우 잘 알고 있다.
+</div>
+  </section>
+
+  <!-- 4. 평가 운영 인식 -->
+  <section class="block">
+    <div class="sec-h">
+      <h2>4. 평가 운영 인식 (응시료·검사시간)</h2>
+      <span class="unit">(단위: %, 명)</span>
+    </div>
+    <div class="sec-purpose">응시료 부담 방식 선호와 1과목(50문항) 기준 적정 검사시간 인식.</div>
+
+    <div class="sub-h">4-1. 응시료 부담 방식 선호</div>
+    <div class="narr"><b>무료(59.4%)·일부 국가 지원(35.8%)</b>이 95.2%로 대부분을 차지함.<br>
+    기타 의견으로는 훈련을 들을 경우 무료로 제공, 소득에 따른 차등 지원에 의견이 있음.</div>
+    <div class="cg">
+      <div id="feeBars" style="padding-top:6px"></div>
+      <div>
+        <div class="tbl-cap">[표] 응시료 부담 방식 (단위: 명, %) · N=458</div>
+        <div id="t_fee"></div>
+      </div>
+    </div>
+
+    <div class="sub-h">4-2. 적정 검사시간 인식</div>
+    <div class="narr">다수 의견은 <b>50~60분(33.8%)·40~50분(28.6%)</b> — 1과목(50문항) 기준.</div>
+    <div class="cg">
+      <div id="timeBars" style="padding-top:6px"></div>
+      <div>
+        <div class="tbl-cap">[표] 적정 검사시간 분포 (단위: 명, %) · N=458</div>
+        <div id="t_time"></div>
+      </div>
+    </div>
+
+    <div class="sub-h">4-3. 난이도 그룹별 적정 검사시간</div>
+    <div class="narr">시간 선호는 체감 난이도와 무관(χ²(8)=7.71, p=.463) — 난이도 인식과는 독립적으로 고려해야 할 운영 요인임.</div>
+    <div class="cg">
+      <div class="chartbox">
+        <div class="chart-holder" style="height:200px"><canvas id="c_tp"></canvas></div>
+        <div id="lg_tp" class="legend"></div>
+      </div>
+      <div>
+        <div class="tbl-cap">[표] 난이도 그룹별 적정 검사시간 (열 100%, 단위: %)</div>
+        <div id="t_tp"></div>
+      </div>
+    </div>
+    <div class="note-fn" id="notes_tp"></div>
+  </section>
+
+  <!-- 5. 개선 요구 -->
+  <section class="block">
+    <div class="sec-h">
+      <h2>5. 평가 개선 요구</h2>
+      <span class="unit">(단위: %, 명)</span>
+    </div>
+    <div class="sec-purpose">자유응답 개선의견의 범주 분포와, 체감 난이도 그룹별 개선요구 선택률.</div>
+
+    <div class="sub-h">5-1. 서술형 개선의견 범주 분포 (자유응답 분류)</div>
+    <div class="narr">전체 458명 중 <b>171명(37.3%)이 서술형 개선의견을 기재</b>(별도 자유서술 문항 — 나머지 287명은 미기재). 아래 비율의 분모는 기재자 171명.<br>
+      기재 의견 중 <b>'의견 없음·만족'이 31.6%로 최다</b> — 불만보다 수용 우세. 실질 요구 1위는 <b>난이도·변별력(15.2%)</b>,
+      2위 직무·실무 연관성(10.5%), 3위 평가영역·문항구성 다양화(9.9%).</div>
+    <div id="improveBars"></div>
+    <div class="note-fn">분모 = 자유응답 개선의견 응답자 N=171(전체 458명 중 자유응답 기재자). 범주화는 응답 의미 기준 유목화.</div>
+
+    <div class="sub-h">5-2. 난이도 그룹별 개선요구 선택률</div>
+    <div class="narr">쉽다 그룹의 '지나치게 쉬웠다' 19.3% vs 어렵다 그룹 4.3% — 쉽다고 느낀 집단이 더 어려운 문항을 요구(χ²(2)=18.76, p&lt;.001).
+      <br>어렵다 그룹은 '시간 부족' 26.1%·'지나치게 어려웠다' 21.7%로 시간 압박을 느꼈음. 단, 어렵다 그룹 N=23 소표본 주의.</div>
+    <div class="cg">
+      <div class="chartbox">
+        <div class="chart-holder" style="height:240px"><canvas id="c_ei"></canvas></div>
+        <div id="lg_ei" class="legend"></div>
+      </div>
+      <div>
+        <div class="tbl-cap">[표] 난이도 그룹별 개선요구 선택률 (단위: %)</div>
+        <div id="t_ei"></div>
+      </div>
+    </div>
+    <div class="note-fn" id="notes_ei"></div>
+  </section>
+
+  <!-- 6. 공공기관 채용시험 경험 -->
+  <section class="block">
+    <div class="sec-h">
+      <h2>6. 공공기관 채용시험 응시 경험</h2>
+      <span class="unit">(단위: %, 명)</span>
+    </div>
+    <div class="sec-purpose">NCS 기반 공공기관 채용시험 응시 여부와 경험자의 준비 방법(복수응답).</div>
+    <div class="narr">응시 경험자는 <b>17.7%(81명)</b>. 경험자의 준비 방법은 <b>기출문제집·교재(69.1%)</b>가 압도적 1위,
+      유튜브·SNS 강의(50.6%) &gt; 학원·인터넷 강의(37.0%) 순 — 자기주도·비대면 학습 채널 중심.</div>
+    <div class="panel-grid">
+      <div class="panel">
+        <h4>응시 여부 (N=458)</h4>
+        <div id="expBars" style="padding-top:4px"></div>
+      </div>
+      <div class="panel">
+        <h4>준비 방법 — 복수응답 (경험자 N=81)</h4>
+        <div id="prepBars" style="padding-top:4px"></div>
+      </div>
+    </div>
+    <div class="note-fn">준비 방법은 복수응답 — 선택률 합계는 100%를 초과함. 분모 = 응시 경험자 81명.</div>
+  </section>
+
+  <!-- 7. 직업 가치관·문항 평균 총괄 -->
+  <section class="block">
+    <div class="sec-h">
+      <h2>7. 직업 가치관 · 문항 평균 총괄</h2>
+      <span class="unit">(단위: %, 명, 점)</span>
+    </div>
+    <div class="sec-purpose">중시하는 일자리 가치의 분포와, 5점척도 전 문항의 평균 요약.</div>
+
+    <div class="sub-h">7-1. 중시하는 일자리 가치</div>
+    <div class="narr"><b>적성·취향 부합(32.8%)</b> &gt; 안정성(26.2%) &gt; 발전 가능성(25.1%)로
+      <br>임금(9.8%)·자율성(4.1%)·사회적 인정(2.0%)은 후순위.</div>
+    <div id="valueBars"></div>
+    <div class="note-fn">분모 = 문항 유효응답 N=458.</div>
+
+    <div class="sub-h">7-2. 5점척도 문항 평균 총괄</div>
+    <div class="cg">
+      <div class="chartbox">
+        <div class="chart-holder" style="height:400px"><canvas id="c_means"></canvas></div>
+      </div>
+      <div>
+        <div class="tbl-cap">[표] 문항별 평균 (단위: 점, 5점척도) · N=458</div>
+        <div id="t_means"></div>
+      </div>
+    </div>
+    <div class="note-fn">난이도 4영역은 양극척도(1=매우 어렵다 ~ 5=매우 쉽다; 평균이 낮을수록 어렵게 체감)이므로 동의형 문항과 직접 비교에 유의.</div>
+  </section>
+
+  <footer class="bot">
+    <div><b>출처</b> 직업기초능력평가 모의테스트 응답자 조사 (N=458) · 정본: ★analysis_result_survey_v3.xlsx.</div>
+    <div><b>분모</b> 각 문항 유효응답(결측 제외). 복수응답 문항은 응답자 수 기준 선택률.</div>
+    <div><b>유의수준</b> * p&lt;.05 &nbsp; ** p&lt;.01 &nbsp; *** p&lt;.001.</div>
+    <div><b>연계 분석</b> 설문 응답과 평가 성취수준을 연결한 분석(성취수준별 인식, 응시의향 회귀, 난이도×등급)은
+      <a href="linked_dashboard.html" style="color:var(--accent);font-weight:600">3. 종합(연계 분석) 페이지</a> 참조.</div>
+  </footer>
+
+</div>
+
+<!-- Chart.js + datalabels (CDN). 실패해도 세그먼트 막대/표는 순수 HTML로 표시됨. -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+
+<script id="dashdata" type="application/json">
+{
+ "n": 458,
+ "attitude": [
+  {"item":"평가 성실도(읽기 노력)","labels":["전혀 그렇지 않다","그렇지 않다","보통이다","그렇다","매우 그렇다"],
+   "freq":[1,2,18,117,320],"pct":[0.2,0.4,3.9,25.5,69.9],"mean":4.64,"n":458},
+  {"item":"평가 집중도","labels":["전혀 그렇지 않다","그렇지 않다","보통이다","그렇다","매우 그렇다"],
+   "freq":[3,10,54,156,235],"pct":[0.7,2.2,11.8,34.1,51.3],"mean":4.33,"n":458}
+ ],
+ "difficulty": {
+  "labels": ["매우 어렵다","어렵다","보통이다","쉽다","매우 쉽다"],
+  "domains": [
+   {"key":"kc","name":"의사소통 국어","freq":[11,76,212,105,54],"pct":[2.4,16.6,46.3,22.9,11.8],"mean":3.25,"n":458},
+   {"key":"ce","name":"의사소통 영어","freq":[17,56,141,138,106],"pct":[3.7,12.2,30.8,30.1,23.1],"mean":3.57,"n":458},
+   {"key":"ma","name":"수리활용","freq":[8,39,196,149,66],"pct":[1.7,8.5,42.8,32.5,14.4],"mean":3.49,"n":458},
+   {"key":"el","name":"문제해결","freq":[16,79,216,111,36],"pct":[3.5,17.2,47.2,24.2,7.9],"mean":3.16,"n":458}
+  ]
+ },
+ "perception": [
+  {"item":"직무 관련성","labels":["전혀 그렇지 않다","그렇지 않다","보통이다","그렇다","매우 그렇다"],
+   "freq":[15,34,162,196,51],"pct":[3.3,7.4,35.4,42.8,11.1],"mean":3.51,"n":458},
+  {"item":"NCS 기반 채용 인지도","labels":["전혀 모른다","들어봤지만 잘 모른다","어느 정도 알고 있다","잘 알고 있다","매우 잘 알고 있다"],
+   "freq":[62,174,139,50,33],"pct":[13.5,38.0,30.3,10.9,7.2],"mean":2.60,"n":458},
+  {"item":"확대 도입 응시 의향","labels":["전혀 그렇지 않다","그렇지 않다","보통이다","그렇다","매우 그렇다"],
+   "freq":[16,37,181,178,46],"pct":[3.5,8.1,39.5,38.9,10.0],"mean":3.44,"n":458},
+  {"item":"인증(등급제) 활용 효용성","labels":["전혀 그렇지 않다","그렇지 않다","보통이다","그렇다","매우 그렇다"],
+   "freq":[18,38,139,168,95],"pct":[3.9,8.3,30.3,36.7,20.7],"mean":3.62,"n":458},
+  {"item":"표준화 통합 유용성","labels":["전혀 그렇지 않다","그렇지 않다","보통이다","그렇다","매우 그렇다"],
+   "freq":[21,38,147,170,82],"pct":[4.6,8.3,32.1,37.1,17.9],"mean":3.55,"n":458}
+ ],
+ "fee": [
+  {"cat":"무료","freq":272,"pct":59.4},
+  {"cat":"일부 국가 지원","freq":164,"pct":35.8},
+  {"cat":"전액 자기 부담","freq":13,"pct":2.8},
+  {"cat":"횟수·기간 차등(혼합)","freq":4,"pct":0.9},
+  {"cat":"소득·조건 연계 차등부담","freq":3,"pct":0.7},
+  {"cat":"조건부 무료","freq":1,"pct":0.2},
+  {"cat":"기업 부담·기업 협약","freq":1,"pct":0.2}
+ ],
+ "time": [
+  {"cat":"50분 이상 60분 미만","freq":156,"pct":33.8},
+  {"cat":"40분 이상 50분 미만","freq":133,"pct":28.6},
+  {"cat":"30분 이상 40분 미만","freq":83,"pct":17.9},
+  {"cat":"60분 이상 70분 미만","freq":51,"pct":11.1},
+  {"cat":"30분 미만","freq":29,"pct":5.9},
+  {"cat":"90분","freq":2,"pct":0.4},
+  {"cat":"기타","freq":4,"pct":0.9}
+ ],
+ "improve": [
+  {"cat":"의견 없음·만족","freq":54,"pct":31.6},
+  {"cat":"난이도·변별력(쉬움·상향)","freq":26,"pct":15.2},
+  {"cat":"직무·실무 연관성","freq":18,"pct":10.5},
+  {"cat":"평가영역·문항구성 다양화","freq":17,"pct":9.9},
+  {"cat":"문항 수·평가 시간","freq":15,"pct":8.8},
+  {"cat":"시청각 자료 품질·재생","freq":7,"pct":4.1},
+  {"cat":"시험 시스템·UI 오류/기능","freq":7,"pct":4.1},
+  {"cat":"결과 활용·피드백·홍보·인증","freq":6,"pct":3.5},
+  {"cat":"난이도 영역별 편차·조절","freq":5,"pct":2.9},
+  {"cat":"시험 운영·안내·환경·응시방식","freq":5,"pct":2.9},
+  {"cat":"평가 목적·필요성 의문","freq":3,"pct":1.8},
+  {"cat":"답안 수정·문항이동 제한","freq":3,"pct":1.8},
+  {"cat":"문항 명료성·오류","freq":3,"pct":1.8},
+  {"cat":"기타(미분류)","freq":2,"pct":1.2}
+ ],
+ "exp": [
+  {"cat":"있다","freq":81,"pct":17.7},
+  {"cat":"없다","freq":377,"pct":82.3}
+ ],
+ "prep": [
+  {"cat":"기출문제집·교재","freq":56,"pct":69.1},
+  {"cat":"유튜브·SNS 강의","freq":41,"pct":50.6},
+  {"cat":"학원·인터넷 강의","freq":30,"pct":37.0},
+  {"cat":"인턴·현장 경험","freq":12,"pct":14.8},
+  {"cat":"별도 준비 없이 응시","freq":12,"pct":14.8},
+  {"cat":"취업 멘토링·컨설팅","freq":9,"pct":11.1},
+  {"cat":"스터디 그룹","freq":6,"pct":7.4},
+  {"cat":"기타","freq":5,"pct":6.2}
+ ],
+ "jobvalue": [
+  {"cat":"자신의 적성·취향에 맞는 일자리","freq":150,"pct":32.8},
+  {"cat":"안정적인 일자리","freq":120,"pct":26.2},
+  {"cat":"장래의 발전 가능성이 높은 일자리","freq":115,"pct":25.1},
+  {"cat":"임금 또는 수입이 많은 일자리","freq":45,"pct":9.8},
+  {"cat":"자율성이 보장되는 일자리","freq":19,"pct":4.1},
+  {"cat":"사회적으로 인정받는 일자리","freq":9,"pct":2.0}
+ ],
+ "means": [
+  {"item":"평가 성실도","mean":4.64},
+  {"item":"구직 적극성(6개월 내 계획)","mean":4.51},
+  {"item":"평가 집중도","mean":4.33},
+  {"item":"훈련 만족도","mean":4.14},
+  {"item":"진로목표 명확성","mean":3.84},
+  {"item":"인증(등급제) 활용 효용성","mean":3.62},
+  {"item":"주관적 생활 만족","mean":3.61},
+  {"item":"난이도 인식-의사소통 영어","mean":3.57,"bipolar":true},
+  {"item":"표준화 통합 유용성","mean":3.55},
+  {"item":"직무 관련성","mean":3.51},
+  {"item":"난이도 인식-수리활용","mean":3.49,"bipolar":true},
+  {"item":"확대 도입 응시 의향","mean":3.44},
+  {"item":"난이도 인식-의사소통 국어","mean":3.25,"bipolar":true},
+  {"item":"난이도 인식-문제해결","mean":3.16,"bipolar":true},
+  {"item":"NCS 기반 채용 인지도","mean":2.60}
+ ],
+ "easy_improve": {
+  "cols": ["'지나치게 쉬웠다' 선택(%)","'지나치게 어려웠다' 선택(%)","'평가 시간 부족' 선택(%)","'개선 필요 없음' 선택(%)"],
+  "rows": [
+   {"grp":"어렵다(1~2)","vals":[4.3,21.7,26.1,17.4],"n":23},
+   {"grp":"보통(3)","vals":[2.9,1.9,10.7,54.4],"n":103},
+   {"grp":"쉽다(4~5)","vals":[19.3,3.0,9.9,39.8],"n":332},
+   {"grp":"전체","vals":[14.8,3.7,10.9,41.9],"n":458}
+  ],
+  "notes": [
+   "합성 난이도 = 4개 영역 난이도 응답의 개인별 평균 → 3그룹화(어렵다 1~2/보통 3/쉽다 4~5)",
+   "선택률 = 각 그룹 내 개선요구(복수응답) 문자열에 해당 보기가 포함된 응답자 비율",
+   "분모 = 그룹 내 개선요구 유효응답(빈값 제외)",
+   "'지나치게 쉬웠다' 선택 여부 × 난이도그룹 카이제곱: χ²(2)=18.76, p=<.001***"
+  ]
+ },
+ "time_pref": {
+  "groups": ["전체","어렵다(1~2)","보통(3)","쉽다(4~5)"],
+  "cats": ["30분 미만","30~40분","40~50분","50~60분","60~70분","기타(서술)"],
+  "pct": {
+   "30분 미만": [5.9,8.7,9.7,4.5],
+   "30~40분": [17.9,17.4,18.4,17.8],
+   "40~50분": [28.6,17.4,26.2,30.1],
+   "50~60분": [33.8,39.1,35.9,32.8],
+   "60~70분": [11.1,17.4,7.8,11.7],
+   "기타(서술)": [2.6,0.0,1.9,3.0]
+  },
+  "n": [458,23,103,332],
+  "notes": [
+   "G_Q10: 1과목(50문항) 기준 적정 검사시간 — 구간 1~5 외 서술 응답은 '기타(서술)' 처리",
+   "열 = 체감 난이도(합성) 3그룹, '전체' 열은 난이도 결측 포함 전체 분포",
+   "검정(구간 1~5만, 기타 제외): χ²(8)=7.71, p=.463, Cramér's V=0.093",
+   "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+  ]
+ }
+}
+</script>
+
+<script>
+var DATA = JSON.parse(document.getElementById('dashdata').textContent);
+
+/* 5점 척도 다이버징 팔레트: 부정(웜) ↔ 긍정(네이비) */
+var LIKERT_COLORS = ['#a04a1e','#dca277','#e8e4dc','#7fa6c9','#16385c'];
+var LIKERT_TXT    = ['#ffffff','#4a2c10','#5b6b7a','#12304e','#ffffff'];
+
+function fmt1(x){ return (Math.round(x*10)/10).toFixed(1); }
+var HAS_CHART = (typeof Chart !== 'undefined');
+if(HAS_CHART && typeof ChartDataLabels !== 'undefined'){ Chart.register(ChartDataLabels); }
+if(HAS_CHART){
+  Chart.defaults.font.family = '"Malgun Gothic","맑은 고딕",sans-serif';
+  Chart.defaults.font.size = 11;
+  Chart.defaults.color = '#3a4a58';
+}
+
+/* ===== KPI ===== */
+(function(){
+  var cards = [
+    {cls:'primary', lab:'유효 응답자 수', val:'458', unit:'명', foot:'설문 응답 완료 기준'},
+    {lab:'확대 도입 응시 의향 긍정', val:'48.9', unit:'%', foot:'그렇다+매우 그렇다 224명 / N=458'},
+    {lab:'NCS 채용 비인지(모른다 계열)', val:'51.5', unit:'%', foot:'전혀 모른다+잘 모른다 236명 / N=458'},
+    {lab:'공공기관 채용시험 응시 경험', val:'17.7', unit:'%', foot:'있다 81명 / N=458'},
+    {lab:'개선요구 "개선 필요 없음" 선택률', val:'41.9', unit:'%', foot:'개선요구 문항(복수선택) 기준 / N=458'}
+  ];
+  document.getElementById('kpiRow').innerHTML = cards.map(function(c){
+    return '<div class="kpi '+(c.cls||'')+'"><div class="lab">'+c.lab+'</div>'
+      + '<div class="val">'+c.val+'<small>'+c.unit+'</small></div>'
+      + '<div class="foot">'+c.foot+'</div></div>';
+  }).join('');
+})();
+
+/* ===== 공용: 5점 세그먼트 막대 ===== */
+function likertSegRow(item){
+  var segs = item.pct.map(function(p,i){
+    var lab = p>=6 ? fmt1(p) : '';
+    return '<div class="seg" title="'+item.labels[i]+' '+fmt1(p)+'% ('+item.freq[i]+'명)"'
+      + ' style="width:'+p+'%;background:'+LIKERT_COLORS[i]+';color:'+LIKERT_TXT[i]+'">'+lab+'</div>';
+  }).join('');
+  return '<div class="seg-row"><div class="seg-lab">'+item.item+'</div>'
+    + '<div class="seg-bar">'+segs+'</div>'
+    + '<div class="seg-n">평균 '+item.mean.toFixed(2)+'<br>N='+item.n+'</div></div>';
+}
+function likertLegend(el, labels){
+  el.innerHTML = labels.map(function(l,i){
+    return '<span class="it"><span class="sw" style="background:'+LIKERT_COLORS[i]+'"></span>'+l+'</span>';
+  }).join('');
+}
+
+/* ===== 1. 수행 태도 ===== */
+(function(){
+  document.getElementById('attitudeBars').innerHTML = DATA.attitude.map(likertSegRow).join('');
+  likertLegend(document.getElementById('lg_likert'), DATA.attitude[0].labels);
+})();
+
+/* ===== 2. 영역별 체감 난이도 (탭) ===== */
+function renderDiff(key){
+  var d = DATA.difficulty.domains.filter(function(x){return x.key===key;})[0];
+  var L = DATA.difficulty.labels;
+  document.getElementById('badge_diff').innerHTML =
+    '<b>'+d.name+'</b> · 평균 <b>'+d.mean.toFixed(2)+'점</b>(1=매우 어렵다~5=매우 쉽다) · N='+d.n
+    + ' · 쉽다 계열 <b>'+fmt1(d.pct[3]+d.pct[4])+'%</b> vs 어렵다 계열 <b>'+fmt1(d.pct[0]+d.pct[1])+'%</b>';
+  document.getElementById('cap_diff').textContent = '[표] '+d.name+' 체감 난이도 분포 (단위: 명, %) · N='+d.n;
+  var h = '<table class="dt"><thead><tr><th>구분</th><th>빈도(명)</th><th>비율(%)</th></tr></thead><tbody>';
+  L.forEach(function(lab,i){
+    h += '<tr><th>'+lab+'</th><td>'+d.freq[i]+'</td><td'+(i===2?' class="hi"':'')+'>'+fmt1(d.pct[i])+'</td></tr>';
+  });
+  h += '<tr><th>전체</th><td style="font-weight:700">'+d.n+'</td><td style="font-weight:700">100.0</td></tr></tbody></table>';
+  document.getElementById('t_diff').innerHTML = h;
+  if(HAS_CHART){
+    if(window._diffChart){ window._diffChart.destroy(); }
+    window._diffChart = new Chart(document.getElementById('c_diff'), {
+      type:'bar',
+      data:{labels:L, datasets:[{label:'비율(%)', data:d.pct.slice(),
+        backgroundColor:LIKERT_COLORS, borderColor:'#fff', borderWidth:1}]},
+      options:{responsive:true, maintainAspectRatio:false,
+        scales:{y:{min:0, max:60, ticks:{callback:function(v){return v+'%';}}, grid:{color:'#eef1f5'}}, x:{grid:{display:false}}},
+        plugins:{legend:{display:false},
+          tooltip:{callbacks:{label:function(ctx){var i=ctx.dataIndex; return fmt1(d.pct[i])+'% ('+d.freq[i]+'명)';}}},
+          datalabels:{anchor:'end', align:'top', color:'#22303d', font:{size:10, weight:600},
+            formatter:function(v,ctx){return fmt1(v)+'%\n('+d.freq[ctx.dataIndex]+'명)';}, textAlign:'center'}}}
+    });
+  }
+}
+(function(){
+  var box = document.getElementById('tabsDiff');
+  box.innerHTML = DATA.difficulty.domains.map(function(d,i){
+    return '<button class="tab'+(i===0?' on':'')+'" data-d="'+d.key+'">'+d.name+'</button>';
+  }).join('');
+  box.addEventListener('click', function(e){
+    var b = e.target.closest('.tab'); if(!b) return;
+    box.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
+    b.classList.add('on'); renderDiff(b.getAttribute('data-d'));
+  });
+  renderDiff('kc');
+  // 4영역 비교 100% 누적
+  var L = DATA.difficulty.labels, doms = DATA.difficulty.domains;
+  if(HAS_CHART){
+    new Chart(document.getElementById('c_diffAll'), {
+      type:'bar',
+      data:{labels:doms.map(function(d){return d.name+' (N='+d.n+')';}),
+        datasets:L.map(function(lab,i){
+          return {label:lab, data:doms.map(function(d){return d.pct[i];}),
+                  backgroundColor:LIKERT_COLORS[i], borderColor:'#fff', borderWidth:1};
+        })},
+      options:{indexAxis:'y', responsive:true, maintainAspectRatio:false,
+        scales:{x:{stacked:true, min:0, max:100, ticks:{callback:function(v){return v+'%';}}, grid:{color:'#eef1f5'}},
+                y:{stacked:true, grid:{display:false}}},
+        plugins:{legend:{display:false},
+          tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': '+fmt1(ctx.parsed.x)+'%';}}},
+          datalabels:{color:function(ctx){return LIKERT_TXT[ctx.datasetIndex];}, font:{size:10, weight:600},
+            formatter:function(v){return v>=6?fmt1(v):'';}}}}
+    });
+  }
+  likertLegend(document.getElementById('lg_diff'), L);
+})();
+
+/* ===== 3. 인식·수용성 ===== */
+(function(){
+  document.getElementById('percepBars').innerHTML = DATA.perception.map(likertSegRow).join('');
+  likertLegend(document.getElementById('lg_likert2'), DATA.perception[0].labels);
+  var h = '<table class="dt"><thead><tr><th>문항</th><th>1(부정)</th><th>2</th><th>3</th><th>4</th><th>5(긍정)</th><th>평균</th><th>N</th></tr></thead><tbody>';
+  DATA.perception.forEach(function(it){
+    h += '<tr><th>'+it.item+'</th>';
+    it.pct.forEach(function(p,i){
+      h += '<td'+(i===4?' class="hi"':'')+'>'+fmt1(p)+'<br><span style="font-size:9px;color:#9aa7b4">('+it.freq[i]+')</span></td>';
+    });
+    h += '<td style="font-weight:700">'+it.mean.toFixed(2)+'</td><td>'+it.n+'</td></tr>';
+  });
+  h += '</tbody></table>';
+  document.getElementById('t_percep').innerHTML = h;
+})();
+
+/* ===== 공용: 가로 빈도 막대 ===== */
+function hbars(el, arr, maxPct, denomN){
+  var mx = maxPct || Math.max.apply(null, arr.map(function(o){return o.pct;}));
+  el.innerHTML = arr.map(function(o){
+    return '<div class="hbar-row"><div class="hbar-lab">'+o.cat+'</div>'
+      + '<div class="hbar-track"><div class="hbar-fill" style="width:'+(o.pct/mx*100)+'%"></div></div>'
+      + '<div class="hbar-val"><b>'+fmt1(o.pct)+'%</b> ('+o.freq+'명)</div></div>';
+  }).join('');
+}
+function freqTable(el, arr, n){
+  var h = '<table class="dt"><thead><tr><th>구분</th><th>빈도(명)</th><th>비율(%)</th></tr></thead><tbody>';
+  arr.forEach(function(o,i){
+    h += '<tr><th>'+o.cat+'</th><td>'+o.freq+'</td><td'+(i===0?' class="hi"':'')+'>'+fmt1(o.pct)+'</td></tr>';
+  });
+  h += '<tr><th>전체</th><td style="font-weight:700">'+n+'</td><td style="font-weight:700">100.0</td></tr></tbody></table>';
+  el.innerHTML = h;
+}
+
+/* ===== 4. 운영 인식 ===== */
+(function(){
+  hbars(document.getElementById('feeBars'), DATA.fee);
+  freqTable(document.getElementById('t_fee'), DATA.fee, 458);
+  hbars(document.getElementById('timeBars'), DATA.time);
+  freqTable(document.getElementById('t_time'), DATA.time, 458);
+
+  // 4-3 난이도그룹별 적정시간 (100% 누적)
+  var TP = DATA.time_pref;
+  var TIME_COLORS = ['#16385c','#33628d','#5f8cb8','#9fbdd8','#cbdcec','#b9c2cc'];
+  if(HAS_CHART){
+    new Chart(document.getElementById('c_tp'), {
+      type:'bar',
+      data:{labels:TP.groups.map(function(g,gi){return g+' (N='+TP.n[gi]+')';}),
+        datasets:TP.cats.map(function(cat,ci){
+          return {label:cat, data:TP.groups.map(function(g,gi){return TP.pct[cat][gi];}),
+                  backgroundColor:TIME_COLORS[ci]||'#b9c2cc', borderColor:'#fff', borderWidth:1};
+        })},
+      options:{indexAxis:'y', responsive:true, maintainAspectRatio:false,
+        scales:{x:{stacked:true, min:0, max:100, ticks:{callback:function(v){return v+'%';}}, grid:{color:'#eef1f5'}},
+                y:{stacked:true, grid:{display:false}}},
+        plugins:{legend:{display:false},
+          tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': '+fmt1(ctx.parsed.x)+'%';}}},
+          datalabels:{color:function(ctx){return ctx.datasetIndex<=1?'#fff':'#22303d';}, font:{size:10, weight:600},
+            formatter:function(v){return v>=6?fmt1(v):'';}}}}
+    });
+  }
+  document.getElementById('lg_tp').innerHTML = TP.cats.map(function(c,i){
+    return '<span class="it"><span class="sw" style="background:'+(TIME_COLORS[i]||'#b9c2cc')+'"></span>'+c+'</span>';}).join('');
+  var h = '<table class="dt"><thead><tr><th>난이도＼시간</th>'
+    + TP.cats.map(function(c){return '<th>'+c+'</th>';}).join('') + '<th>N</th></tr></thead><tbody>';
+  TP.groups.forEach(function(g,gi){
+    h += '<tr><th>'+g+'</th>'+TP.cats.map(function(c){return '<td>'+fmt1(TP.pct[c][gi])+'</td>';}).join('')+'<td>'+TP.n[gi]+'</td></tr>';
+  });
+  h += '</tbody></table>';
+  document.getElementById('t_tp').innerHTML = h;
+  document.getElementById('notes_tp').innerHTML = TP.notes.map(function(n){return '· '+n;}).join('<br>');
+})();
+
+/* ===== 5. 개선 요구 ===== */
+(function(){
+  hbars(document.getElementById('improveBars'), DATA.improve);
+
+  var EI = DATA.easy_improve;
+  var shortCols = ['지나치게 쉬웠다','지나치게 어려웠다','시간 부족','개선 필요 없음'];
+  var chartRows = EI.rows.filter(function(r){return r.grp !== '전체';});
+  var GC = ['#b06a2c','#8fb0cf','#16385c']; // 어렵다 / 보통 / 쉽다
+  if(HAS_CHART){
+    new Chart(document.getElementById('c_ei'), {
+      type:'bar',
+      data:{labels:shortCols, datasets:chartRows.map(function(r,ri){
+        return {label:r.grp+' (N='+r.n+')', data:r.vals.slice(), backgroundColor:GC[ri], borderColor:'#fff', borderWidth:1};
+      })},
+      options:{responsive:true, maintainAspectRatio:false,
+        scales:{y:{min:0, ticks:{callback:function(v){return v+'%';}}, grid:{color:'#eef1f5'}}, x:{grid:{display:false}}},
+        plugins:{legend:{display:false},
+          tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': '+fmt1(ctx.parsed.y)+'%';}}},
+          datalabels:{anchor:'end', align:'top', color:'#22303d', font:{size:9, weight:600}, formatter:function(v){return v>=2?fmt1(v):'';}}}}
+    });
+  }
+  document.getElementById('lg_ei').innerHTML = chartRows.map(function(r,i){
+    return '<span class="it"><span class="sw" style="background:'+GC[i]+'"></span>'+r.grp+' (N='+r.n+')</span>';}).join('');
+  var h = '<table class="dt"><thead><tr><th>난이도 그룹</th>'
+    + shortCols.map(function(c){return '<th>'+c+'</th>';}).join('') + '<th>N</th></tr></thead><tbody>';
+  EI.rows.forEach(function(r){
+    h += '<tr><th>'+r.grp+'</th>'+r.vals.map(function(v){return '<td>'+fmt1(v)+'</td>';}).join('')+'<td>'+r.n+'</td></tr>';
+  });
+  h += '</tbody></table>';
+  document.getElementById('t_ei').innerHTML = h;
+  document.getElementById('notes_ei').innerHTML = EI.notes.map(function(n){return '· '+n;}).join('<br>');
+})();
+
+/* ===== 6. 응시 경험 ===== */
+(function(){
+  hbars(document.getElementById('expBars'), DATA.exp, 100);
+  hbars(document.getElementById('prepBars'), DATA.prep, 100);
+})();
+
+/* ===== 7. 직업 가치관·문항 평균 ===== */
+(function(){
+  hbars(document.getElementById('valueBars'), DATA.jobvalue);
+
+  var M = DATA.means;
+  if(HAS_CHART){
+    new Chart(document.getElementById('c_means'), {
+      type:'bar',
+      data:{labels:M.map(function(m){return m.item;}),
+        datasets:[{label:'평균(점)', data:M.map(function(m){return m.mean;}),
+          backgroundColor:M.map(function(m){return m.bipolar ? '#c98a4e' : '#16385c';}), borderColor:'#fff', borderWidth:1}]},
+      options:{indexAxis:'y', responsive:true, maintainAspectRatio:false,
+        scales:{x:{min:1, max:5, ticks:{stepSize:1, callback:function(v){return v+'점';}}, grid:{color:'#eef1f5'}}, y:{grid:{display:false}}},
+        plugins:{legend:{display:false},
+          tooltip:{callbacks:{label:function(ctx){return ctx.parsed.x.toFixed(2)+'점';}}},
+          datalabels:{anchor:'end', align:'end', color:'#22303d', font:{size:10, weight:600},
+            formatter:function(v){return v.toFixed(2);}}}}
+    });
+  }
+  var h = '<table class="dt"><thead><tr><th>문항</th><th>평균(점)</th></tr></thead><tbody>';
+  M.forEach(function(m){
+    h += '<tr><th>'+m.item+(m.bipolar?' <span style="font-size:9.5px;color:#b06a2c">양극척도</span>':'')+'</th><td class="hi">'+m.mean.toFixed(2)+'</td></tr>';
+  });
+  h += '</tbody></table>';
+  document.getElementById('t_means').innerHTML = h;
+})();
+
+/* CDN 실패 안내 (세그먼트 막대/표는 정상) */
+window.addEventListener('load', function(){
+  if(typeof Chart === 'undefined'){
+    document.querySelectorAll('.chart-holder').forEach(function(el){
+      el.innerHTML = '<div class="fallback" style="display:block">차트 라이브러리(Chart.js) 로드 실패. 각 섹션의 데이터 표와 막대로 모든 수치 확인 가능.</div>';
+    });
+  }
+});
+</script>
+
+<!-- 우측 도킹 목차 + TOP 버튼 (페이지 공통) -->
+<script>
+(function(){
+  var secs = Array.prototype.slice.call(document.querySelectorAll('section.block'));
+  if(secs.length){
+    var toc = document.createElement('nav');
+    toc.className = 'side-toc';
+    var links = [];
+    toc.innerHTML = '<div class="tc-t">이 페이지 목차</div>';
+    secs.forEach(function(sec, i){
+      var h = sec.querySelector('h2'); if(!h) return;
+      var id = 'sec-' + (i+1);
+      sec.id = sec.id || id;
+      var a = document.createElement('a');
+      a.href = '#' + sec.id;
+      a.textContent = h.textContent.replace(/\s+/g,' ').trim();
+      toc.appendChild(a); links.push([sec, a]);
+    });
+    document.body.appendChild(toc);
+    function spy(){
+      var y = window.scrollY + 130, cur = null;
+      links.forEach(function(p){ if(p[0].offsetTop <= y) cur = p[1]; });
+      links.forEach(function(p){ p[1].classList.toggle('on', p[1] === cur); });
+    }
+    window.addEventListener('scroll', spy, {passive:true}); spy();
+  }
+  var btn = document.createElement('button');
+  btn.id = 'topBtn'; btn.title = '맨 위로'; btn.textContent = 'TOP';
+  btn.addEventListener('click', function(){ window.scrollTo({top:0, behavior:'smooth'}); });
+  document.body.appendChild(btn);
+  window.addEventListener('scroll', function(){
+    btn.style.display = window.scrollY > 400 ? 'block' : 'none';
+  }, {passive:true});
+})();
+</script>
+</body>
+</html>

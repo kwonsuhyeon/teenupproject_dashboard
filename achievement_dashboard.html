@@ -1,0 +1,3732 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>성취도 결과 · 직업기초능력평가 성취수준 분포 대시보드</title>
+<style>
+  :root{
+    --navy:#16385c; --navy2:#2f628f; --navy3:#5f8cb8; --ink:#1f2a36;
+    --muted:#5b6b7a; --line:#dde3ea; --bg:#f4f6f9; --card:#ffffff;
+    --accent:#b06a2c; --ok:#2e7d5b; --warn:#a23b3b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo",-apple-system,"Segoe UI",sans-serif;
+    color:var(--ink); background:var(--bg); line-height:1.55; font-size:14px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1200px; margin:0 auto; padding:0 20px 64px;}
+  /* Header */
+  header.top{
+    background:linear-gradient(135deg,#12304e 0%,#1d4a75 100%); color:#fff;
+    padding:34px 0 30px; margin-bottom:26px;
+  }
+  header.top .wrap{padding-bottom:0;}
+  header.top h1{margin:0 0 6px; font-size:25px; letter-spacing:-0.5px;}
+  header.top .sub{opacity:.9; font-size:13.5px;}
+  header.top .meta{margin-top:14px; font-size:12.5px; opacity:.82;}
+  header.top .meta b{color:#ffd9a8; font-weight:600;}
+  /* KPI */
+  .kpi-row{display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin:-46px 0 30px;}
+  .kpi{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 16px 14px;
+       box-shadow:0 4px 16px rgba(20,45,75,.08);}
+  .kpi .lab{font-size:12px; color:var(--muted); margin-bottom:8px; min-height:32px;}
+  .kpi .val{font-size:30px; font-weight:700; color:var(--navy); letter-spacing:-1px; line-height:1;}
+  .kpi .val small{font-size:15px; font-weight:600; margin-left:1px;}
+  .kpi .foot{font-size:10.5px; color:#9aa7b4; margin-top:7px;}
+  .kpi.primary{background:linear-gradient(135deg,#1d4a75,#16385c); border:none;}
+  .kpi.primary .lab,.kpi.primary .foot{color:#cfe0ef;}
+  .kpi.primary .val{color:#fff;}
+  /* Section */
+  section.block{background:var(--card); border:1px solid var(--line); border-radius:14px;
+                padding:22px 24px 26px; margin-bottom:24px; box-shadow:0 2px 8px rgba(20,45,75,.04);}
+  .sec-h{display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+         border-bottom:2px solid var(--navy); padding-bottom:10px; margin-bottom:6px;}
+  .sec-h h2{margin:0; font-size:19px; color:var(--navy);}
+  .sec-h .unit{font-size:12px; color:var(--muted); white-space:nowrap;}
+  .sec-purpose{color:var(--muted); font-size:12.5px; margin:8px 0 18px;}
+  .sub-h{font-size:15px; font-weight:700; color:var(--ink); margin:26px 0 10px;
+         padding-left:10px; border-left:4px solid var(--navy2);}
+  .sub-h:first-of-type{margin-top:14px;}
+  /* narrative */
+  .narr{background:#f0f5fa; border:1px solid #dbe6f1; border-left:4px solid var(--navy2);
+        border-radius:8px; padding:12px 14px; margin:14px 0; font-size:12.8px; color:#33475b;}
+  .narr b{color:var(--navy);}
+  .narr ul{margin:6px 0 0; padding-left:18px;}
+  .narr li{margin:3px 0;}
+  /* chart + table grid */
+  .cg{display:grid; grid-template-columns:1.15fr .85fr; gap:22px; align-items:start;}
+  .cg .chartbox{min-width:0;}
+  .chart-holder{position:relative; width:100%;}
+  /* tables */
+  table.dt{width:100%; border-collapse:collapse; font-size:11.8px; margin-top:2px;}
+  table.dt th,table.dt td{border:1px solid var(--line); padding:5px 7px; text-align:center;}
+  table.dt thead th{background:#e9eef5; color:var(--navy); font-weight:700;}
+  table.dt tbody th{background:#eef2f7; color:var(--ink); font-weight:600; text-align:left; white-space:nowrap;}
+  table.dt tbody tr:nth-child(even) td{background:#fafbfd;}
+  table.dt td.hi{font-weight:700; color:var(--navy);}
+  .tbl-cap{font-size:11px; color:var(--muted); margin:6px 0 2px;}
+  /* tabs / selectors */
+  .tabs{display:flex; gap:6px; flex-wrap:wrap; margin:6px 0 4px;}
+  .tab{border:1px solid var(--line); background:#fff; color:var(--muted); padding:7px 15px;
+       border-radius:20px; cursor:pointer; font-size:12.5px; font-family:inherit; transition:.12s;}
+  .tab:hover{border-color:var(--navy3); color:var(--navy);}
+  .tab.on{background:var(--navy); border-color:var(--navy); color:#fff; font-weight:600;}
+  .sel-row{display:flex; gap:18px; flex-wrap:wrap; align-items:center; margin:4px 0 12px;}
+  .sel-row .grp{display:flex; gap:6px; align-items:center;}
+  .sel-row .grp>span{font-size:12px; color:var(--muted); font-weight:600;}
+  /* heatmap */
+  table.hm{width:100%; border-collapse:collapse; font-size:11.8px; table-layout:fixed;}
+  table.hm th,table.hm td{border:1px solid #fff; padding:8px 4px; text-align:center;}
+  table.hm thead th{background:#e9eef5; color:var(--navy); font-weight:700; border:1px solid var(--line); font-size:11px;}
+  table.hm thead th .n{display:block; font-size:9.5px; color:var(--muted); font-weight:400;}
+  table.hm tbody th{background:#eef2f7; color:var(--ink); font-weight:600; text-align:center; border-color:var(--line);}
+  table.hm td{font-weight:600; font-variant-numeric:tabular-nums;}
+  table.hm td.na{background:#e7eaee!important; color:#9aa7b4!important; font-weight:400;}
+  .hm-scale{display:flex; align-items:center; gap:8px; font-size:11px; color:var(--muted); margin:10px 0 2px; justify-content:flex-end;}
+  .hm-grad{width:120px; height:11px; border-radius:3px; border:1px solid var(--line);
+           background:linear-gradient(90deg,#ffffff,#16385c);}
+  /* stat badge */
+  .badge{display:inline-flex; align-items:center; gap:8px; flex-wrap:wrap; background:#eef2f7;
+         border:1px solid #d6dee7; border-radius:7px; padding:5px 11px; font-size:11.8px;
+         color:#33475b; margin:6px 0;}
+  .badge b{color:var(--navy);}
+  .sig{font-weight:700;}
+  .sig.s0{color:var(--muted);} .sig.s1{color:#3a7a52;} .sig.s2{color:#286b8f;} .sig.s3{color:var(--warn);}
+  /* panels 2x2 */
+  .panel-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  .panel{border:1px solid var(--line); border-radius:10px; padding:14px 14px 12px; background:#fcfdfe;}
+  .panel h4{margin:0 0 4px; font-size:14px; color:var(--navy);}
+  /* legend */
+  .legend{display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin-top:10px; font-size:11.5px; color:var(--muted);}
+  .legend .it{display:flex; align-items:center; gap:5px;}
+  .legend .sw{width:13px; height:13px; border-radius:3px; display:inline-block;}
+  .note-fn{font-size:11px; color:#8a97a4; margin-top:8px; line-height:1.5;}
+  .note-fn b{color:var(--muted);}
+  /* demographic segmented bars (pure HTML/CSS) */
+  .demo-wrap{display:flex; flex-direction:column; gap:11px;}
+  .demo-row{display:flex; align-items:center; gap:12px;}
+  .demo-row .dlab{width:52px; flex:none; text-align:right; font-size:12.5px; font-weight:700; color:var(--navy);}
+  .demo-bar{flex:1; display:flex; height:30px; border-radius:6px; overflow:hidden; border:1px solid var(--line); background:#fff;}
+  .demo-seg{display:flex; align-items:center; justify-content:center; font-size:10.5px; white-space:nowrap; overflow:hidden; padding:0 3px; min-width:0;}
+  /* footer */
+  footer.bot{border-top:1px solid var(--line); margin-top:10px; padding-top:18px;
+             font-size:11.5px; color:var(--muted); line-height:1.7;}
+  footer.bot b{color:var(--ink);}
+  .fallback{display:none; font-size:11.5px; color:var(--warn); padding:10px; border:1px dashed var(--warn);
+            border-radius:8px; margin-bottom:10px; background:#fdf3f3;}
+  @media (max-width:900px){
+    .kpi-row{grid-template-columns:repeat(2,1fr); margin-top:20px;}
+    .cg{grid-template-columns:1fr;}
+    .panel-grid{grid-template-columns:1fr;}
+    header.top{padding-bottom:24px;}
+  }
+  /* 전체 메뉴 (페이지 공통) */
+  nav.topnav{position:sticky; top:0; z-index:100; background:#0e2540; box-shadow:0 2px 10px rgba(10,25,45,.3);}
+  nav.topnav .nav-wrap{max-width:1200px; margin:0 auto; padding:0 20px; display:flex; align-items:center; gap:2px; height:48px;}
+  nav.topnav .brand{color:#c9d6e4; font-size:12.5px; font-weight:700; margin-right:20px; letter-spacing:-0.3px; white-space:nowrap;}
+  nav.topnav a{color:#9fb4ca; text-decoration:none; font-size:13.5px; font-weight:600; padding:0 16px;
+               height:48px; line-height:45px; display:inline-block; border-bottom:3px solid transparent; white-space:nowrap;}
+  nav.topnav a:hover{color:#fff; background:rgba(255,255,255,.07);}
+  nav.topnav a.on{color:#fff; border-bottom-color:#ffd9a8;}
+  /* 영역 밴드 (대구분) */
+  .area-band{margin:34px 0 14px; padding:12px 18px; border-radius:8px;
+             background:linear-gradient(135deg,#12304e 0%,#1d4a75 100%); color:#fff;
+             font-size:16px; font-weight:700; letter-spacing:-0.3px;}
+  .area-band small{display:block; font-weight:400; font-size:12px; color:#c9d6e4; margin-top:3px;}
+  .area-band:first-of-type{margin-top:0;}
+  /* 설문 페이지 링크 배너 */
+  a.link-banner{display:block; background:var(--card); border:1px solid var(--line);
+                border-left:6px solid #b06a2c; border-radius:12px; padding:18px 20px;
+                margin-bottom:24px; text-decoration:none; color:inherit;
+                box-shadow:0 2px 8px rgba(20,45,75,.04); transition:background .15s;}
+  a.link-banner:hover{background:#fdf7f0;}
+  a.link-banner .lb-t{font-size:15px; font-weight:700; color:var(--navy);}
+  a.link-banner .lb-d{font-size:12.5px; color:var(--muted); margin-top:5px; line-height:1.6;}
+  a.link-banner .lb-go{display:inline-block; margin-top:8px; font-size:12.5px; font-weight:700; color:#b06a2c;}
+  /* 우측 도킹 목차 + TOP 버튼 (페이지 공통) */
+  .side-toc{position:fixed; top:50%; right:0; transform:translateY(-50%); width:184px;
+    background:rgba(255,255,255,.97); border:1px solid var(--line); border-right:none;
+    border-radius:12px 0 0 12px; padding:12px 14px;
+    box-shadow:-4px 4px 16px rgba(20,45,75,.15); font-size:11.5px; z-index:94;
+    max-height:72vh; overflow-y:auto;}
+  .side-toc .tc-t{font-weight:700; color:var(--navy); font-size:11px; margin-bottom:7px;
+    padding-bottom:6px; border-bottom:1px solid var(--line);}
+  .side-toc a{display:block; color:var(--muted); text-decoration:none; padding:4px 0 4px 9px;
+    border-left:2px solid var(--line); line-height:1.45;}
+  .side-toc a:hover{color:var(--navy);}
+  .side-toc a.on{color:var(--navy); font-weight:700; border-left-color:#b06a2c; background:#faf5ee;}
+  #topBtn{position:fixed; right:16px; bottom:26px; width:46px; height:46px; border-radius:50%;
+    background:#16385c; color:#fff; border:none; cursor:pointer; font-size:13px; font-weight:700;
+    box-shadow:0 4px 12px rgba(20,45,75,.35); display:none; z-index:95; font-family:inherit;}
+  #topBtn:hover{background:#2d5f8f;}
+  html{scroll-behavior:smooth;}
+  section.block{scroll-margin-top:60px;}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="nav-wrap">
+    <span class="brand">직업기초능력평가 대시보드</span>
+    <a href="achievement_dashboard.html" class="on">1. 성취도 결과</a>
+    <a href="survey_dashboard.html">2. 설문조사</a>
+    <a href="linked_dashboard.html">3. 종합(연계 분석)</a>
+  </div>
+</nav>
+
+<header class="top">
+  <div class="wrap">
+    <h1>직업계고 직업기초능력평가 성인대상 모의테스트 및 설문조사 주요결과</h1>
+    <div class="sub">1. 성취도 결과 — 응시자 집단 특성과 네 영역(의사소통-국어·의사소통-영어·수리활용·문제해결)의 성취수준 분포</div>
+    <div class="meta">자료: 직업기초능력평가 모의테스트 응답자 조사 · 유효 응답자 <b>N=458</b>(국어는 결측 2명 제외 <b>456</b>) · 설문 참여하고, 시험에 응시한 표본으로 분석진행 · <b>등급은 1등급이 최상위</b></div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- KPI -->
+  <div class="kpi-row" id="kpiRow"></div>
+
+  <!-- ===== 영역 Ⅰ ===== -->
+  <div class="area-band">Ⅰ. 응시자 집단 특성과 직업기초능력평가 결과
+    <small>누가 응시했고, 네 영역(의사소통-국어·의사소통-영어·수리활용·문제해결)에서 어떤 성취를 보였는가</small></div>
+
+  <!-- SECTION 1: 조사 개요·응답자 특성 -->
+  <section class="block">
+    <div class="sec-h">
+      <h2>1. 조사 개요·응답자 특성</h2>
+      <span class="unit">(단위: %, 명) · N=458</span>
+    </div>
+    <div class="sec-purpose">직업기초능력평가 모의테스트 및 설문조사 응답자 특성</div>
+    <div class="narr">남자 76.9%·20대 이하 61.1%·대졸 이상 55.5% — 젊은 남성·대졸 중심 표본. 시도는 서울(32.8%)·부산(22.5%) 집중, 경남 N=1.</div>
+    <div class="cg">
+      <div class="chartbox"><div class="demo-wrap" id="demoBars"></div></div>
+      <div>
+        <div class="tbl-cap">[표] 응답자 특성별 분포 (단위: 명, %)</div>
+        <div id="demoTable"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2 (formerly 1) -->
+  <section class="block">
+    <div class="sec-h">
+      <h2>2. 영역별 성취수준 분포</h2>
+      <span class="unit">(단위: %, 100% 누적)</span>
+    </div>
+    <div class="sec-purpose">색이 진할수록 상위 등급(1등급).</div>
+    <div class="narr">
+      <b>요약</b>
+      <ul>
+        <li>전 영역에서 <b>1등급이 60%대 이상</b>임 — 상위 등급 편중 분포.</li>
+        <li><b>수리활용(69.4%)</b>이 1등급 비율 최고, <b>문제해결(63.3%)</b>이 최저.</li>
+        <li>4~5등급 합산 비율은 <b>문제해결(9.4%)</b>이 가장 높음.</li>
+      </ul>
+    </div>
+    <div class="cg">
+      <div class="chartbox">
+        <div class="chart-holder"><canvas id="c_dist" height="230"></canvas></div>
+        <div id="lg_grade" class="legend"></div>
+      </div>
+      <div>
+        <div class="tbl-cap">[표 1] 영역별 등급 분포 — 비율%(빈도)</div>
+        <div id="t_dist"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2 -->
+  <section class="block">
+    <div class="sec-h">
+      <h2>3. 등급-하위영역 일관성 (하위영역 프로파일)</h2>
+      <span class="unit">(단위: %)</span>
+    </div>
+    <div class="sec-purpose">"의사소통 1등급이면 경청·문서이해·문서작성·언어구사가 모두 우수인가?"</div>
+
+    <div class="sub-h">3-1. 하위영역 16개 성취수준 분포 (기초 / 보통 / 우수)</div>
+    <div class="cg">
+      <div class="chartbox">
+        <div class="chart-holder"><canvas id="c_substen" height="380"></canvas></div>
+        <div id="lg_level3" class="legend"></div>
+      </div>
+      <div>
+        <div class="tbl-cap">[표 2] 하위영역별 성취수준 분포 (단위: %)</div>
+        <div id="t_substen"></div>
+      </div>
+    </div>
+
+    <div class="sub-h">3-2. 등급 × 하위영역 우수 성취기준 비율 히트맵</div>
+    <div class="tabs" id="tabsLS"></div>
+    <div class="narr" id="narrLS"></div>
+    <div id="hmLS"></div>
+    <div class="hm-scale"><span>우수 성취기준 비율 낮음</span><span class="hm-grad"></span><span>높음</span></div>
+    <div class="note-fn">셀 값 = 해당 등급 집단 내 '우수' 판정 비율(%). '전체' 행은 해당 하위영역의 전체 응답 기준 우수 성취기준 비율. 순수 HTML 표(색=순차 스케일)로 렌더되어 차트 라이브러리와 무관하게 표시됨.</div>
+
+    <div class="sub-h">3-3. 영역 간 등급 비율</div>
+    <div class="narr">영역 간 등급의 상관이 높음. — 네 영역 서로 간 상관 ρ=.54~.65(전부 p&lt;.001).<br>
+      국어 1등급자(309명)의 <b>85.4%는 수리도 1등급</b>, 82.8%는 영어·문제해결도 1등급.<br>
+      <b>네 영역 모두 1등급인 응답자는 47.4%</b>(456명 중 216명).</div>
+    <div class="cg">
+      <div>
+        <div class="tbl-cap">[표] 영역 간 등급 상관 (Spearman ρ, 하삼각)</div>
+        <div id="hmDC"></div>
+        <div class="note-fn">Spearman ρ(등급 1~5 서열형, 쌍별 결측 제거). 양(+)의 ρ = 한 영역 등급이 좋을수록 다른 영역 등급도 좋음. 유의: * p&lt;.05 ** p&lt;.01 *** p&lt;.001.</div>
+      </div>
+      <div>
+        <div class="tbl-cap">[표] 기준 영역 1등급자의 타 영역 1등급 비율 (단위: %)</div>
+        <div id="hmTO"></div>
+        <div class="note-fn">셀 = 행(기준 영역 1등급 집단, N 병기) 중 열 영역에서도 1등급인 비율. 행마다 분모가 다름 — 대각선은 정의상 100(회색). 읽기 예: 국어 1등급 행 × 수리 열 = 국어 1등급자 중 수리도 1등급인 비율(85.4%).</div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bot">
+    <div><b>출처</b> 직업기초능력평가 모의테스트 응답자 조사 (N=458).</div>
+    <div><b>분모</b> 각 문항 유효응답(결측 제외). 특성별 교차표는 각 열(집단)의 유효응답 기준.</div>
+    <div><b>유의수준</b> * p&lt;.05 &nbsp; ** p&lt;.01 &nbsp; *** p&lt;.001. 기대빈도&lt;5 셀이 20% 이상인 검정은 Fisher/범주통합 권장(표 주석 참조).</div>
+    <div><b>소표본 주의</b> 경남(N=1)은 해석 제외, 충남(N=18)·전북(N=28)은 소표본으로 해석 주의 필요.</div>
+    <div><b>등급 체계</b> 1등급이 최상위, 5등급이 최하위.</div>
+    <div><b>회귀 분석</b> 회귀는 중복 독립변수 보정판(보-4) 기준.</div>
+  </footer>
+
+</div>
+
+<!-- Chart.js + datalabels (CDN). 실패해도 히트맵/표는 순수 HTML로 표시됨. -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+
+<script id="dashdata" type="application/json">
+{
+ "overview": {
+  "n": 458
+ },
+ "achievement_dist": {
+  "kc": [
+   {
+    "grade": "1",
+    "freq": 309,
+    "pct": 67.8
+   },
+   {
+    "grade": "2",
+    "freq": 72,
+    "pct": 15.8
+   },
+   {
+    "grade": "3",
+    "freq": 51,
+    "pct": 11.2
+   },
+   {
+    "grade": "4",
+    "freq": 18,
+    "pct": 3.9
+   },
+   {
+    "grade": "5",
+    "freq": 6,
+    "pct": 1.3
+   }
+  ],
+  "ce": [
+   {
+    "grade": "1",
+    "freq": 296,
+    "pct": 64.6
+   },
+   {
+    "grade": "2",
+    "freq": 103,
+    "pct": 22.5
+   },
+   {
+    "grade": "3",
+    "freq": 33,
+    "pct": 7.2
+   },
+   {
+    "grade": "4",
+    "freq": 18,
+    "pct": 3.9
+   },
+   {
+    "grade": "5",
+    "freq": 8,
+    "pct": 1.7
+   }
+  ],
+  "ma": [
+   {
+    "grade": "1",
+    "freq": 318,
+    "pct": 69.4
+   },
+   {
+    "grade": "2",
+    "freq": 103,
+    "pct": 22.5
+   },
+   {
+    "grade": "3",
+    "freq": 17,
+    "pct": 3.7
+   },
+   {
+    "grade": "4",
+    "freq": 17,
+    "pct": 3.7
+   },
+   {
+    "grade": "5",
+    "freq": 3,
+    "pct": 0.7
+   }
+  ],
+  "el": [
+   {
+    "grade": "1",
+    "freq": 290,
+    "pct": 63.3
+   },
+   {
+    "grade": "2",
+    "freq": 99,
+    "pct": 21.6
+   },
+   {
+    "grade": "3",
+    "freq": 26,
+    "pct": 5.7
+   },
+   {
+    "grade": "4",
+    "freq": 31,
+    "pct": 6.8
+   },
+   {
+    "grade": "5",
+    "freq": 12,
+    "pct": 2.6
+   }
+  ]
+ },
+ "by_demo": {
+  "kc": {
+   "gender": {
+    "groups": [
+     "남자",
+     "여자"
+    ],
+    "grades": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "5"
+    ],
+    "pct": {
+     "1": [
+      63.0,
+      83.8
+     ],
+     "2": [
+      18.5,
+      6.7
+     ],
+     "3": [
+      12.0,
+      8.6
+     ],
+     "4": [
+      4.8,
+      1.0
+     ],
+     "5": [
+      1.7,
+      0.0
+     ]
+    },
+    "n": [
+     351,
+     105
+    ],
+    "stats": {
+     "chi2": "18.1",
+     "df": "4",
+     "p": ".001**",
+     "v": "0.2"
+    },
+    "notes": [
+     "검정: 카이제곱(기대빈도<5 셀 20%↑ — Fisher/범주통합 권장)",
+     "χ²(4)=18.10, p=.001**, Cramér's V=0.199",
+     "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+    ]
+   },
+   "age": {
+    "groups": [
+     "20대 이하",
+     "30대",
+     "40대 이상"
+    ],
+    "grades": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "5"
+    ],
+    "pct": {
+     "1": [
+      73.5,
+      68.3,
+      20.0
+     ],
+     "2": [
+      16.5,
+      15.5,
+      11.4
+     ],
+     "3": [
+      7.9,
+      12.0,
+      34.3
+     ],
+     "4": [
+      1.8,
+      4.2,
+      20.0
+     ],
+     "5": [
+      0.4,
+      0.0,
+      14.3
+     ]
+    },
+    "n": [
+     279,
+     142,
+     35
+    ],
+    "stats": {
+     "chi2": "107.86",
+     "df": "8",
+     "p": "<.001***",
+     "v": "0.34"
+    },
+    "notes": [
+     "검정: 카이제곱(기대빈도<5 셀 20%↑ — Fisher/범주통합 권장)",
+     "χ²(8)=107.86, p=<.001***, Cramér's V=0.344",
+     "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+    ]
+   },
+   "edu": {
+    "groups": [
+     "고졸 이하",
+     "전문대졸",
+     "대졸 이상"
+    ],
+    "grades": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "5"
+    ],
+    "pct": {
+     "1": [
+      58.6,
+      49.3,
+      77.9
+     ],
+     "2": [
+      21.1,
+      25.3,
+      10.3
+     ],
+     "3": [
+      12.5,
+      18.7,
+      8.3
+     ],
+     "4": [
+      4.7,
+      6.7,
+      2.8
+     ],
+     "5": [
+      3.1,
+      0.0,
+      0.8
+     ]
+    },
+    "n": [
+     128,
+     75,
+     253
+    ],
+    "stats": {
+     "chi2": "33.65",
+     "df": "8",
+     "p": "<.001***",
+     "v": "0.19"
+    },
+    "notes": [
+     "검정: 카이제곱(기대빈도<5 셀 20%↑ — Fisher/범주통합 권장)",
+     "χ²(8)=33.65, p=<.001***, Cramér's V=0.192",
+     "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+    ]
+   },
+   "sido": {
+    "groups": [
+     "서울",
+     "인천",
+     "경기",
+     "부산",
+     "광주",
+     "충남",
+     "전북",
+     "경남"
+    ],
+    "grades": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "5"
+    ],
+    "pct": {
+     "1": [
+      86.6,
+      55.9,
+      58.3,
+      72.5,
+      50.0,
+      66.7,
+      21.4,
+      100.0
+     ],
+     "2": [
+      8.1,
+      26.5,
+      19.4,
+      16.7,
+      23.1,
+      11.1,
+      21.4,
+      0.0
+     ],
+     "3": [
+      4.0,
+      14.7,
+      16.7,
+      8.8,
+      17.3,
+      22.2,
+      21.4,
+      0.0
+     ],
+     "4": [
+      1.3,
+      2.9,
+      4.2,
+      2.0,
+      9.6,
+      0.0,
+      17.9,
+      0.0
+     ],
+     "5": [
+      0.0,
+      0.0,
+      1.4,
+      0.0,
+      0.0,
+      0.0,
+      17.9,
+      0.0
+     ]
+    },
+    "n": [
+     149,
+     34,
+     72,
+     102,
+     52,
+     18,
+     28,
+     1
+    ],
+    "stats": {
+     "chi2": "134.1",
+     "df": "28",
+     "p": "<.001***",
+     "v": "0.27"
+    },
+    "notes": [
+     "검정: 카이제곱(기대빈도<5 셀 20%↑ — Fisher/범주통합 권장)",
+     "χ²(28)=134.10, p=<.001***, Cramér's V=0.271",
+     "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+    ]
+   }
+  },
+  "ce": {
+   "gender": {
+    "groups": [
+     "남자",
+     "여자"
+    ],
+    "grades": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "5"
+    ],
+    "pct": {
+     "1": [
+      58.2,
+      85.8
+     ],
+     "2": [
+      25.6,
+      12.3
+     ],
+     "3": [
+      8.8,
+      1.9
+     ],
+     "4": [
+      5.1,
+      0.0
+     ],
+     "5": [
+      2.3,
+      0.0
+     ]
+    },
+    "n": [
+     352,
+     106
+    ],
+    "stats": {
+     "chi2": "29.27",
+     "df": "4",
+     "p": "<.001***",
+     "v": "0.25"
+    },
+    "notes": [
+     "검정: 카이제곱",
+     "χ²(4)=29.27, p=<.001***, Cramér's V=0.253",
+     "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+    ]
+   },
+   "age": {
+    "groups": [
+     "20대 이하",
+     "30대",
+     "40대 이상"
+    ],
+    "grades": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "5"
+    ],
+    "pct": {
+     "1": [
+      68.6,
+      66.4,
+      25.7
+     ],
+     "2": [
+      23.6,
+      23.1,
+      11.4
+     ],
+     "3": [
+      4.6,
+      7.0,
+      28.6
+     ],
+     "4": [
+      2.1,
+      2.8,
+      22.9
+     ],
+     "5": [
+      1.1,
+      0.7,
+      11.4
+     ]
+    },
+    "n": [
+     280,
+     143,
+     35
+    ],
+    "stats": {
+     "chi2": "90.81",
+     "df": "8",
+     "p": "<.001***",
+     "v": "0.31"
+    },
+    "notes": [
+     "검정: 카이제곱(기대빈도<5 셀 20%↑ — Fisher/범주통합 권장)",
+     "χ²(8)=90.81, p=<.001***, Cramér's V=0.315",
+     "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+    ]
+   },
+   "edu": {
+    "groups": [
+     "고졸 이하",
+     "전문대졸",
+     "대졸 이상"
+    ],
+    "grades": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "5"
+    ],
+    "pct": {
+     "1": [
+      51.2,
+      33.3,
+      80.7
+     ],
+     "2": [
+      28.7,
+      42.7,
+      13.4
+     ],
+     "3": [
+      11.6,
+      16.0,
+      2.4
+     ],
+     "4": [
+      5.4,
+      5.3,
+      2.8
+     ],
+     "5": [
+      3.1,
+      2.7,
+      0.8
+     ]
+    },
+    "n": [
+     129,
+     75,
+     254
+    ],
+    "stats": {
+     "chi2": "75.16",
+     "df": "8",
+     "p": "<.001***",
+     "v": "0.29"
+    },
+    "notes": [
+     "검정: 카이제곱(기대빈도<5 셀 20%↑ — Fisher/범주통합 권장)",
+     "χ²(8)=75.16, p=<.001***, Cramér's V=0.286",
+     "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+    ]
+   },
+   "sido": {
+    "groups": [
+     "서울",
+     "인천",
+     "경기",
+     "부산",
+     "광주",
+     "충남",
+     "전북",
+     "경남"
+    ],
+    "grades": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "5"
+    ],
+    "pct": {
+     "1": [
+      88.0,
+      38.2,
+      54.2,
+      74.8,
+      40.4,
+      50.0,
+      14.3,
+      100.0
+     ],
+     "2": [
+      11.3,
+      50.0,
+      29.2,
+      20.4,
+      32.7,
+      33.3,
+      14.3,
+      0.0
+     ],
+     "3": [
+      0.7,
+      8.8,
+      12.5,
+      2.9,
+      11.5,
+      16.7,
+      28.6,
+      0.0
+     ],
+     "4": [
+      0.0,
+      0.0,
+      4.2,
+      1.0,
+      13.5,
+      0.0,
+      25.0,
+      0.0
+     ],
+     "5": [
+      0.0,
+      2.9,
+      0.0,
+      1.0,
+      1.9,
+      0.0,
+      17.9,
+      0.0
+     ]
+    },
+    "n": [
+     150,
+     34,
+     72,
+     103,
+     52,
+     18,
+     28,
+     1
+    ],
+    "stats": {
+     "chi2": "197.73",
+     "df": "28",
+     "p": "<.001***",
+     "v": "0.33"
+    },
+    "notes": [
+     "검정: 카이제곱(기대빈도<5 셀 20%↑ — Fisher/범주통합 권장)",
+     "χ²(28)=197.73, p=<.001***, Cramér's V=0.329",
+     "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+    ]
+   }
+  },
+  "ma": {
+   "gender": {
+    "groups": [
+     "남자",
+     "여자"
+    ],
+    "grades": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "5"
+    ],
+    "pct": {
+     "1": [
+      67.0,
+      77.4
+     ],
+     "2": [
+      23.6,
+      18.9
+     ],
+     "3": [
+      4.0,
+      2.8
+     ],
+     "4": [
+      4.5,
+      0.9
+     ],
+     "5": [
+      0.9,
+      0.0
+     ]
+    },
+    "n": [
+     352,
+     106
+    ],
+    "stats": {
+     "chi2": "6.09",
+     "df": "4",
+     "p": ".192",
+     "v": "0.12"
+    },
+    "notes": [
+     "검정: 카이제곱(기대빈도<5 셀 20%↑ — Fisher/범주통합 권장)",
+     "χ²(4)=6.09, p=.192, Cramér's V=0.115",
+     "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+    ]
+   },
+   "age": {
+    "groups": [
+     "20대 이하",
+     "30대",
+     "40대 이상"
+    ],
+    "grades": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "5"
+    ],
+    "pct": {
+     "1": [
+      73.6,
+      70.6,
+      31.4
+     ],
+     "2": [
+      21.4,
+      21.0,
+      37.1
+     ],
+     "3": [
+      2.5,
+      4.2,
+      11.4
+     ],
+     "4": [
+      2.5,
+      4.2,
+      11.4
+     ],
+     "5": [
+      0.0,
+      0.0,
+      8.6
+     ]
+    },
+    "n": [
+     280,
+     143,
+     35
+    ],
+    "stats": {
+     "chi2": "61.51",
+     "df": "8",
+     "p": "<.001***",
+     "v": "0.26"
+    },
+    "notes": [
+     "검정: 카이제곱(기대빈도<5 셀 20%↑ — Fisher/범주통합 권장)",
+     "χ²(8)=61.51, p=<.001***, Cramér's V=0.259",
+     "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+    ]
+   },
+   "edu": {
+    "groups": [
+     "고졸 이하",
+     "전문대졸",
+     "대졸 이상"
+    ],
+    "grades": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "5"
+    ],
+    "pct": {
+     "1": [
+      61.2,
+      53.3,
+      78.3
+     ],
+     "2": [
+      27.1,
+      34.7,
+      16.5
+     ],
+     "3": [
+      4.7,
+      5.3,
+      2.8
+     ],
+     "4": [
+      6.2,
+      6.7,
+      1.6
+     ],
+     "5": [
+      0.8,
+      0.0,
+      0.8
+     ]
+    },
+    "n": [
+     129,
+     75,
+     254
+    ],
+    "stats": {
+     "chi2": "26.23",
+     "df": "8",
+     "p": "<.001***",
+     "v": "0.17"
+    },
+    "notes": [
+     "검정: 카이제곱(기대빈도<5 셀 20%↑ — Fisher/범주통합 권장)",
+     "χ²(8)=26.23, p=<.001***, Cramér's V=0.169",
+     "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+    ]
+   },
+   "sido": {
+    "groups": [
+     "서울",
+     "인천",
+     "경기",
+     "부산",
+     "광주",
+     "충남",
+     "전북",
+     "경남"
+    ],
+    "grades": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "5"
+    ],
+    "pct": {
+     "1": [
+      78.7,
+      64.7,
+      58.3,
+      84.5,
+      63.5,
+      50.0,
+      21.4,
+      100.0
+     ],
+     "2": [
+      18.0,
+      32.4,
+      33.3,
+      10.7,
+      25.0,
+      38.9,
+      35.7,
+      0.0
+     ],
+     "3": [
+      2.7,
+      0.0,
+      4.2,
+      1.0,
+      5.8,
+      11.1,
+      14.3,
+      0.0
+     ],
+     "4": [
+      0.7,
+      2.9,
+      2.8,
+      3.9,
+      5.8,
+      0.0,
+      21.4,
+      0.0
+     ],
+     "5": [
+      0.0,
+      0.0,
+      1.4,
+      0.0,
+      0.0,
+      0.0,
+      7.1,
+      0.0
+     ]
+    },
+    "n": [
+     150,
+     34,
+     72,
+     103,
+     52,
+     18,
+     28,
+     1
+    ],
+    "stats": {
+     "chi2": "100.36",
+     "df": "28",
+     "p": "<.001***",
+     "v": "0.23"
+    },
+    "notes": [
+     "검정: 카이제곱(기대빈도<5 셀 20%↑ — Fisher/범주통합 권장)",
+     "χ²(28)=100.36, p=<.001***, Cramér's V=0.234",
+     "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+    ]
+   }
+  },
+  "el": {
+   "gender": {
+    "groups": [
+     "남자",
+     "여자"
+    ],
+    "grades": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "5"
+    ],
+    "pct": {
+     "1": [
+      59.7,
+      75.5
+     ],
+     "2": [
+      23.6,
+      15.1
+     ],
+     "3": [
+      6.2,
+      3.8
+     ],
+     "4": [
+      7.1,
+      5.7
+     ],
+     "5": [
+      3.4,
+      0.0
+     ]
+    },
+    "n": [
+     352,
+     106
+    ],
+    "stats": {
+     "chi2": "10.67",
+     "df": "4",
+     "p": ".030*",
+     "v": "0.15"
+    },
+    "notes": [
+     "검정: 카이제곱",
+     "χ²(4)=10.67, p=.030*, Cramér's V=0.153",
+     "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+    ]
+   },
+   "age": {
+    "groups": [
+     "20대 이하",
+     "30대",
+     "40대 이상"
+    ],
+    "grades": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "5"
+    ],
+    "pct": {
+     "1": [
+      67.1,
+      67.8,
+      14.3
+     ],
+     "2": [
+      22.1,
+      18.2,
+      31.4
+     ],
+     "3": [
+      5.4,
+      4.9,
+      11.4
+     ],
+     "4": [
+      4.3,
+      6.3,
+      28.6
+     ],
+     "5": [
+      1.1,
+      2.8,
+      14.3
+     ]
+    },
+    "n": [
+     280,
+     143,
+     35
+    ],
+    "stats": {
+     "chi2": "66.95",
+     "df": "8",
+     "p": "<.001***",
+     "v": "0.27"
+    },
+    "notes": [
+     "검정: 카이제곱(기대빈도<5 셀 20%↑ — Fisher/범주통합 권장)",
+     "χ²(8)=66.95, p=<.001***, Cramér's V=0.270",
+     "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+    ]
+   },
+   "edu": {
+    "groups": [
+     "고졸 이하",
+     "전문대졸",
+     "대졸 이상"
+    ],
+    "grades": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "5"
+    ],
+    "pct": {
+     "1": [
+      52.7,
+      38.7,
+      76.0
+     ],
+     "2": [
+      27.1,
+      38.7,
+      13.8
+     ],
+     "3": [
+      9.3,
+      8.0,
+      3.1
+     ],
+     "4": [
+      7.0,
+      10.7,
+      5.5
+     ],
+     "5": [
+      3.9,
+      4.0,
+      1.6
+     ]
+    },
+    "n": [
+     129,
+     75,
+     254
+    ],
+    "stats": {
+     "chi2": "46.27",
+     "df": "8",
+     "p": "<.001***",
+     "v": "0.22"
+    },
+    "notes": [
+     "검정: 카이제곱",
+     "χ²(8)=46.27, p=<.001***, Cramér's V=0.225",
+     "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+    ]
+   },
+   "sido": {
+    "groups": [
+     "서울",
+     "인천",
+     "경기",
+     "부산",
+     "광주",
+     "충남",
+     "전북",
+     "경남"
+    ],
+    "grades": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "5"
+    ],
+    "pct": {
+     "1": [
+      83.3,
+      50.0,
+      44.4,
+      70.9,
+      46.2,
+      66.7,
+      21.4,
+      100.0
+     ],
+     "2": [
+      12.0,
+      41.2,
+      31.9,
+      18.4,
+      28.8,
+      16.7,
+      25.0,
+      0.0
+     ],
+     "3": [
+      2.0,
+      2.9,
+      15.3,
+      2.9,
+      7.7,
+      5.6,
+      10.7,
+      0.0
+     ],
+     "4": [
+      2.0,
+      5.9,
+      5.6,
+      6.8,
+      13.5,
+      11.1,
+      21.4,
+      0.0
+     ],
+     "5": [
+      0.7,
+      0.0,
+      2.8,
+      1.0,
+      3.8,
+      0.0,
+      21.4,
+      0.0
+     ]
+    },
+    "n": [
+     150,
+     34,
+     72,
+     103,
+     52,
+     18,
+     28,
+     1
+    ],
+    "stats": {
+     "chi2": "123.81",
+     "df": "28",
+     "p": "<.001***",
+     "v": "0.26"
+    },
+    "notes": [
+     "검정: 카이제곱(기대빈도<5 셀 20%↑ — Fisher/범주통합 권장)",
+     "χ²(28)=123.81, p=<.001***, Cramér's V=0.260",
+     "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+    ]
+   }
+  }
+ },
+ "supp_level_substen": {
+  "kc": {
+   "cols": [
+    "경청",
+    "문서이해",
+    "문서작성",
+    "언어구사"
+   ],
+   "rows": [
+    {
+     "grade": "1등급",
+     "vals": [
+      98.7,
+      99.4,
+      90.3,
+      96.4
+     ],
+     "n": 309
+    },
+    {
+     "grade": "2등급",
+     "vals": [
+      84.7,
+      61.1,
+      34.7,
+      37.5
+     ],
+     "n": 72
+    },
+    {
+     "grade": "3등급",
+     "vals": [
+      51.0,
+      19.6,
+      9.8,
+      11.8
+     ],
+     "n": 51
+    },
+    {
+     "grade": "4등급",
+     "vals": [
+      27.8,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "n": 18
+    },
+    {
+     "grade": "5등급",
+     "vals": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "n": 6
+    },
+    {
+     "grade": "전체",
+     "vals": [
+      87.1,
+      79.2,
+      67.8,
+      72.6
+     ],
+     "n": 456
+    }
+   ]
+  },
+  "ce": {
+   "cols": [
+    "경청",
+    "문서이해",
+    "문서작성",
+    "언어구사"
+   ],
+   "rows": [
+    {
+     "grade": "1등급",
+     "vals": [
+      100.0,
+      100.0,
+      98.6,
+      99.7
+     ],
+     "n": 296
+    },
+    {
+     "grade": "2등급",
+     "vals": [
+      87.4,
+      98.1,
+      71.8,
+      62.1
+     ],
+     "n": 103
+    },
+    {
+     "grade": "3등급",
+     "vals": [
+      18.2,
+      39.4,
+      18.2,
+      18.2
+     ],
+     "n": 33
+    },
+    {
+     "grade": "4등급",
+     "vals": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "n": 18
+    },
+    {
+     "grade": "5등급",
+     "vals": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "n": 8
+    },
+    {
+     "grade": "전체",
+     "vals": [
+      85.6,
+      89.5,
+      81.2,
+      79.7
+     ],
+     "n": 458
+    }
+   ]
+  },
+  "ma": {
+   "cols": [
+    "기초연산",
+    "기초통계",
+    "도표분석",
+    "도표작성"
+   ],
+   "rows": [
+    {
+     "grade": "1등급",
+     "vals": [
+      88.4,
+      98.4,
+      81.4,
+      95.9
+     ],
+     "n": 318
+    },
+    {
+     "grade": "2등급",
+     "vals": [
+      40.8,
+      73.8,
+      20.4,
+      53.4
+     ],
+     "n": 103
+    },
+    {
+     "grade": "3등급",
+     "vals": [
+      17.6,
+      35.3,
+      5.9,
+      0.0
+     ],
+     "n": 17
+    },
+    {
+     "grade": "4등급",
+     "vals": [
+      5.9,
+      11.8,
+      5.9,
+      0.0
+     ],
+     "n": 17
+    },
+    {
+     "grade": "5등급",
+     "vals": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "n": 3
+    },
+    {
+     "grade": "전체",
+     "vals": [
+      71.4,
+      86.7,
+      61.6,
+      78.6
+     ],
+     "n": 458
+    }
+   ]
+  },
+  "el": {
+   "cols": [
+    "자원관리",
+    "정보활용",
+    "기술활용",
+    "시스템적사고"
+   ],
+   "rows": [
+    {
+     "grade": "1등급",
+     "vals": [
+      99.7,
+      99.0,
+      100.0,
+      88.6
+     ],
+     "n": 290
+    },
+    {
+     "grade": "2등급",
+     "vals": [
+      80.8,
+      91.9,
+      86.9,
+      63.6
+     ],
+     "n": 99
+    },
+    {
+     "grade": "3등급",
+     "vals": [
+      26.9,
+      34.6,
+      42.3,
+      50.0
+     ],
+     "n": 26
+    },
+    {
+     "grade": "4등급",
+     "vals": [
+      3.2,
+      12.9,
+      16.1,
+      32.3
+     ],
+     "n": 31
+    },
+    {
+     "grade": "5등급",
+     "vals": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "n": 12
+    },
+    {
+     "grade": "전체",
+     "vals": [
+      82.3,
+      85.4,
+      85.6,
+      74.9
+     ],
+     "n": 458
+    }
+   ]
+  }
+ },
+ "supp_substen_dist": [
+  {
+   "domain": "의사소통-국어",
+   "sub": "경청",
+   "basic": 2.6,
+   "mid": 10.3,
+   "high": 87.1,
+   "n": 456
+  },
+  {
+   "domain": "의사소통-국어",
+   "sub": "문서이해",
+   "basic": 2.9,
+   "mid": 18.0,
+   "high": 79.2,
+   "n": 456
+  },
+  {
+   "domain": "의사소통-국어",
+   "sub": "문서작성",
+   "basic": 6.8,
+   "mid": 25.4,
+   "high": 67.8,
+   "n": 456
+  },
+  {
+   "domain": "의사소통-국어",
+   "sub": "언어구사",
+   "basic": 7.5,
+   "mid": 20.0,
+   "high": 72.6,
+   "n": 456
+  },
+  {
+   "domain": "의사소통-영어",
+   "sub": "경청",
+   "basic": 4.6,
+   "mid": 9.8,
+   "high": 85.6,
+   "n": 458
+  },
+  {
+   "domain": "의사소통-영어",
+   "sub": "문서이해",
+   "basic": 3.3,
+   "mid": 7.2,
+   "high": 89.5,
+   "n": 458
+  },
+  {
+   "domain": "의사소통-영어",
+   "sub": "문서작성",
+   "basic": 7.0,
+   "mid": 11.8,
+   "high": 81.2,
+   "n": 458
+  },
+  {
+   "domain": "의사소통-영어",
+   "sub": "언어구사",
+   "basic": 3.1,
+   "mid": 17.2,
+   "high": 79.7,
+   "n": 458
+  },
+  {
+   "domain": "수리활용",
+   "sub": "기초연산",
+   "basic": 2.6,
+   "mid": 26.0,
+   "high": 71.4,
+   "n": 458
+  },
+  {
+   "domain": "수리활용",
+   "sub": "기초통계",
+   "basic": 4.8,
+   "mid": 8.5,
+   "high": 86.7,
+   "n": 458
+  },
+  {
+   "domain": "수리활용",
+   "sub": "도표분석",
+   "basic": 3.7,
+   "mid": 34.7,
+   "high": 61.6,
+   "n": 458
+  },
+  {
+   "domain": "수리활용",
+   "sub": "도표작성",
+   "basic": 5.2,
+   "mid": 16.2,
+   "high": 78.6,
+   "n": 458
+  },
+  {
+   "domain": "문제해결",
+   "sub": "자원관리",
+   "basic": 7.6,
+   "mid": 10.0,
+   "high": 82.3,
+   "n": 458
+  },
+  {
+   "domain": "문제해결",
+   "sub": "정보활용",
+   "basic": 7.6,
+   "mid": 7.0,
+   "high": 85.4,
+   "n": 458
+  },
+  {
+   "domain": "문제해결",
+   "sub": "기술활용",
+   "basic": 5.0,
+   "mid": 9.4,
+   "high": 85.6,
+   "n": 458
+  },
+  {
+   "domain": "문제해결",
+   "sub": "시스템적사고",
+   "basic": 5.0,
+   "mid": 20.1,
+   "high": 74.9,
+   "n": 458
+  }
+ ],
+ "supp_capital": {
+  "kc": {
+   "groups": [
+    "수도권",
+    "비수도권"
+   ],
+   "grades": [
+    "1등급",
+    "2등급",
+    "3등급",
+    "4등급",
+    "5등급"
+   ],
+   "pct": {
+    "1등급": [
+     74.5,
+     59.2
+    ],
+    "2등급": [
+     13.7,
+     18.4
+    ],
+    "3등급": [
+     9.0,
+     13.9
+    ],
+    "4등급": [
+     2.4,
+     6.0
+    ],
+    "5등급": [
+     0.4,
+     2.5
+    ]
+   },
+   "n": [
+    255,
+    201
+   ],
+   "stats": {
+    "chi2": "15.35",
+    "df": "4",
+    "p": ".004**",
+    "v": "0.18"
+   },
+   "notes": [
+    "수도권 = 서울특별시·인천광역시·경기도 전 지역(수도권정비계획법 제2조)",
+    "검정: 카이제곱",
+    "χ²(4)=15.35, p=.004**, Cramér's V=0.183",
+    "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+   ]
+  },
+  "ce": {
+   "groups": [
+    "수도권",
+    "비수도권"
+   ],
+   "grades": [
+    "1등급",
+    "2등급",
+    "3등급",
+    "4등급",
+    "5등급"
+   ],
+   "pct": {
+    "1등급": [
+     71.9,
+     55.4
+    ],
+    "2등급": [
+     21.5,
+     23.8
+    ],
+    "3등급": [
+     5.1,
+     9.9
+    ],
+    "4등급": [
+     1.2,
+     7.4
+    ],
+    "5등급": [
+     0.4,
+     3.5
+    ]
+   },
+   "n": [
+    256,
+    202
+   ],
+   "stats": {
+    "chi2": "25.97",
+    "df": "4",
+    "p": "<.001***",
+    "v": "0.24"
+   },
+   "notes": [
+    "수도권 = 서울특별시·인천광역시·경기도 전 지역(수도권정비계획법 제2조)",
+    "검정: 카이제곱",
+    "χ²(4)=25.97, p=<.001***, Cramér's V=0.238",
+    "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+   ]
+  },
+  "ma": {
+   "groups": [
+    "수도권",
+    "비수도권"
+   ],
+   "grades": [
+    "1등급",
+    "2등급",
+    "3등급",
+    "4등급",
+    "5등급"
+   ],
+   "pct": {
+    "1등급": [
+     71.1,
+     67.3
+    ],
+    "2등급": [
+     24.2,
+     20.3
+    ],
+    "3등급": [
+     2.7,
+     5.0
+    ],
+    "4등급": [
+     1.6,
+     6.4
+    ],
+    "5등급": [
+     0.4,
+     1.0
+    ]
+   },
+   "n": [
+    256,
+    202
+   ],
+   "stats": {
+    "chi2": "10.34",
+    "df": "4",
+    "p": ".035*",
+    "v": "0.15"
+   },
+   "notes": [
+    "수도권 = 서울특별시·인천광역시·경기도 전 지역(수도권정비계획법 제2조)",
+    "검정: 카이제곱",
+    "χ²(4)=10.34, p=.035*, Cramér's V=0.150",
+    "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+   ]
+  },
+  "el": {
+   "groups": [
+    "수도권",
+    "비수도권"
+   ],
+   "grades": [
+    "1등급",
+    "2등급",
+    "3등급",
+    "4등급",
+    "5등급"
+   ],
+   "pct": {
+    "1등급": [
+     68.0,
+     57.4
+    ],
+    "2등급": [
+     21.5,
+     21.8
+    ],
+    "3등급": [
+     5.9,
+     5.4
+    ],
+    "4등급": [
+     3.5,
+     10.9
+    ],
+    "5등급": [
+     1.2,
+     4.5
+    ]
+   },
+   "n": [
+    256,
+    202
+   ],
+   "stats": {
+    "chi2": "15.74",
+    "df": "4",
+    "p": ".003**",
+    "v": "0.19"
+   },
+   "notes": [
+    "수도권 = 서울특별시·인천광역시·경기도 전 지역(수도권정비계획법 제2조)",
+    "검정: 카이제곱",
+    "χ²(4)=15.74, p=.003**, Cramér's V=0.185",
+    "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+   ]
+  }
+ },
+ "demographics": {
+  "성별": [
+   {
+    "cat": "남자",
+    "freq": 352,
+    "pct": 76.9
+   },
+   {
+    "cat": "여자",
+    "freq": 106,
+    "pct": 23.1
+   }
+  ],
+  "연령대": [
+   {
+    "cat": "20대 이하",
+    "freq": 280,
+    "pct": 61.1
+   },
+   {
+    "cat": "30대",
+    "freq": 143,
+    "pct": 31.2
+   },
+   {
+    "cat": "40대 이상",
+    "freq": 35,
+    "pct": 7.6
+   }
+  ],
+  "학력": [
+   {
+    "cat": "고졸 이하",
+    "freq": 129,
+    "pct": 28.2
+   },
+   {
+    "cat": "전문대졸",
+    "freq": 75,
+    "pct": 16.4
+   },
+   {
+    "cat": "대졸 이상",
+    "freq": 254,
+    "pct": 55.5
+   }
+  ],
+  "시도": [
+   {
+    "cat": "서울",
+    "freq": 150,
+    "pct": 32.8
+   },
+   {
+    "cat": "인천",
+    "freq": 34,
+    "pct": 7.4
+   },
+   {
+    "cat": "경기",
+    "freq": 72,
+    "pct": 15.7
+   },
+   {
+    "cat": "부산",
+    "freq": 103,
+    "pct": 22.5
+   },
+   {
+    "cat": "광주",
+    "freq": 52,
+    "pct": 11.4
+   },
+   {
+    "cat": "충남",
+    "freq": 18,
+    "pct": 3.9
+   },
+   {
+    "cat": "전북",
+    "freq": 28,
+    "pct": 6.1
+   },
+   {
+    "cat": "경남",
+    "freq": 1,
+    "pct": 0.2
+   }
+  ]
+ },
+ "att_by_ach": {
+  "levels": [
+   "1",
+   "2",
+   "3",
+   "4",
+   "5"
+  ],
+  "items": [
+   {
+    "item": "평가 성실도(읽기 노력)",
+    "means": [
+     4.77,
+     4.53,
+     4.58,
+     4.23,
+     3.92
+    ],
+    "sds": [
+     0.47,
+     0.63,
+     0.64,
+     0.76,
+     1.24
+    ],
+    "test": "Kruskal-Wallis",
+    "stat": "H=38.77",
+    "p": "<.001***",
+    "effect": "η²=0.106"
+   },
+   {
+    "item": "평가 집중도",
+    "means": [
+     4.47,
+     4.19,
+     4.08,
+     3.94,
+     3.83
+    ],
+    "sds": [
+     0.73,
+     0.82,
+     0.84,
+     1.09,
+     1.19
+    ],
+    "test": "Kruskal-Wallis",
+    "stat": "H=21.62",
+    "p": "<.001***",
+    "effect": "η²=0.055"
+   },
+   {
+    "item": "체감 난이도",
+    "means": [
+     3.58,
+     3.11,
+     3.08,
+     2.79,
+     2.56
+    ],
+    "sds": [
+     0.72,
+     0.72,
+     0.55,
+     0.81,
+     0.86
+    ],
+    "test": "Kruskal-Wallis",
+    "stat": "H=69.52",
+    "p": "<.001***",
+    "effect": "η²=0.144"
+   },
+   {
+    "item": "직무 관련성",
+    "means": [
+     3.58,
+     3.39,
+     3.27,
+     3.39,
+     3.67
+    ],
+    "sds": [
+     0.87,
+     0.96,
+     0.83,
+     1.02,
+     0.98
+    ],
+    "test": "Kruskal-Wallis",
+    "stat": "H=6.65",
+    "p": ".156",
+    "effect": "η²=0.013"
+   }
+  ]
+ },
+ "acc_by_exp": {
+  "groups": [
+   "없음",
+   "있음"
+  ],
+  "items": [
+   {
+    "item": "NCS 인지도",
+    "means": [
+     2.39,
+     3.58
+    ],
+    "sds": [
+     0.96,
+     1.06
+    ],
+    "test": "독립표본 t",
+    "stat": "t=-9.90",
+    "p": "<.001***",
+    "effect": "d=-1.21"
+   },
+   {
+    "item": "표준화 통합 유용성",
+    "means": [
+     3.51,
+     3.77
+    ],
+    "sds": [
+     1.01,
+     1.06
+    ],
+    "test": "독립표본 t",
+    "stat": "t=-2.05",
+    "p": ".041*",
+    "effect": "d=-0.25"
+   },
+   {
+    "item": "확대 도입 응시의향",
+    "means": [
+     3.41,
+     3.57
+    ],
+    "sds": [
+     0.91,
+     0.89
+    ],
+    "test": "독립표본 t",
+    "stat": "t=-1.42",
+    "p": ".158",
+    "effect": "d=-0.17"
+   },
+   {
+    "item": "인증 활용 효용",
+    "means": [
+     3.6,
+     3.72
+    ],
+    "sds": [
+     1.03,
+     0.99
+    ],
+    "test": "독립표본 t",
+    "stat": "t=-0.93",
+    "p": ".354",
+    "effect": "d=-0.11"
+   }
+  ]
+ },
+ "correlation": {
+  "vars": [
+   "직무 관련성",
+   "NCS 인지도",
+   "표준화 통합 유용성",
+   "확대 도입 응시의향",
+   "인증 활용 효용",
+   "진로목표 명확성",
+   "구직 적극성(6개월 계획)",
+   "생활 만족도"
+  ],
+  "r": [
+   [
+    1.0,
+    0.16,
+    0.34,
+    0.44,
+    0.4,
+    0.21,
+    0.19,
+    0.25
+   ],
+   [
+    0.16,
+    1.0,
+    0.14,
+    0.23,
+    0.18,
+    0.13,
+    0.15,
+    0.07
+   ],
+   [
+    0.34,
+    0.14,
+    1.0,
+    0.42,
+    0.6,
+    0.11,
+    0.13,
+    0.12
+   ],
+   [
+    0.44,
+    0.23,
+    0.42,
+    1.0,
+    0.53,
+    0.06,
+    0.14,
+    0.19
+   ],
+   [
+    0.4,
+    0.18,
+    0.6,
+    0.53,
+    1.0,
+    0.02,
+    0.11,
+    0.1
+   ],
+   [
+    0.21,
+    0.13,
+    0.11,
+    0.06,
+    0.02,
+    1.0,
+    0.35,
+    0.18
+   ],
+   [
+    0.19,
+    0.15,
+    0.13,
+    0.14,
+    0.11,
+    0.35,
+    1.0,
+    0.21
+   ],
+   [
+    0.25,
+    0.07,
+    0.12,
+    0.19,
+    0.1,
+    0.18,
+    0.21,
+    1.0
+   ]
+  ],
+  "note": "Pearson r (하삼각 기준 대칭화). 중복 변수(표준화 통합 유용성) 제외"
+ },
+ "intent_regression": {
+  "rows": [
+   {
+    "var": "(상수)",
+    "B": "0.55",
+    "SE": "0.28",
+    "beta": "-",
+    "t": "1.97",
+    "p": ".050*",
+    "vif": "-"
+   },
+   {
+    "var": "직무 관련성",
+    "B": "0.23",
+    "SE": "0.04",
+    "beta": "0.23",
+    "t": "5.3",
+    "p": "<.001***",
+    "vif": "1.31"
+   },
+   {
+    "var": "표준화 통합 유용성",
+    "B": "0.09",
+    "SE": "0.04",
+    "beta": "0.1",
+    "t": "2.07",
+    "p": ".039*",
+    "vif": "1.61"
+   },
+   {
+    "var": "NCS 인지도",
+    "B": "0.1",
+    "SE": "0.03",
+    "beta": "0.12",
+    "t": "3.02",
+    "p": ".003**",
+    "vif": "1.07"
+   },
+   {
+    "var": "인증 활용 효용",
+    "B": "0.32",
+    "SE": "0.04",
+    "beta": "0.36",
+    "t": "7.36",
+    "p": "<.001***",
+    "vif": "1.71"
+   },
+   {
+    "var": "구직 적극성(6개월 계획)",
+    "B": "0.02",
+    "SE": "0.05",
+    "beta": "0.01",
+    "t": "0.3",
+    "p": ".762",
+    "vif": "1.13"
+   },
+   {
+    "var": "생활 만족도",
+    "B": "0.09",
+    "SE": "0.04",
+    "beta": "0.08",
+    "t": "2.11",
+    "p": ".035*",
+    "vif": "1.13"
+   },
+   {
+    "var": "성별_여자",
+    "B": "0.08",
+    "SE": "0.08",
+    "beta": "0.04",
+    "t": "0.99",
+    "p": ".322",
+    "vif": "1.1"
+   },
+   {
+    "var": "연령대_30대",
+    "B": "0.12",
+    "SE": "0.08",
+    "beta": "0.06",
+    "t": "1.57",
+    "p": ".118",
+    "vif": "1.08"
+   },
+   {
+    "var": "연령대_40대 이상",
+    "B": "0.05",
+    "SE": "0.13",
+    "beta": "0.02",
+    "t": "0.4",
+    "p": ".691",
+    "vif": "1.11"
+   },
+   {
+    "var": "학력_대졸 이상",
+    "B": "-0.09",
+    "SE": "0.08",
+    "beta": "-0.05",
+    "t": "-1.08",
+    "p": ".280",
+    "vif": "1.38"
+   },
+   {
+    "var": "학력_전문대졸",
+    "B": "-0.15",
+    "SE": "0.11",
+    "beta": "-0.06",
+    "t": "-1.45",
+    "p": ".148",
+    "vif": "1.35"
+   }
+  ],
+  "notes": [
+   "'채용 활용 유용성(G_Q06)'은 실제 설문에 미출제(해당 자리에 표준화 통합 문항이 중복 게재됨) — 응답 원천이 동일하여 표준화 통합 유용성 단일 변수로 통합",
+   "종속변수: 확대 도입 응시의향 / N=458",
+   "R²=0.381, adj.R²=0.365, F(11,446)=24.93, p=<.001***",
+   "기준범주: 성별=남자, 연령대=20대 이하, 학력=고졸 이하",
+   "VIF≥10은 다중공선성 경고(⚠). β=표준화계수. 유의: * p<.05 ** p<.01 *** p<.001",
+   "표 Ⅲ-27의 보정판(중복 독립변수 제외 재산출)"
+  ]
+ },
+ "diff_grade": {
+  "kc": {
+   "groups": [
+    "어렵다(1~2)",
+    "보통(3)",
+    "쉽다(4~5)"
+   ],
+   "cats": [
+    "1등급",
+    "2등급",
+    "3등급",
+    "4등급",
+    "5등급"
+   ],
+   "pct": {
+    "1등급": [
+     46.0,
+     64.8,
+     83.6
+    ],
+    "2등급": [
+     20.7,
+     17.6,
+     10.7
+    ],
+    "3등급": [
+     20.7,
+     12.4,
+     4.4
+    ],
+    "4등급": [
+     10.3,
+     3.3,
+     1.3
+    ],
+    "5등급": [
+     2.3,
+     1.9,
+     0.0
+    ]
+   },
+   "n": [
+    87,
+    210,
+    159
+   ],
+   "stats": {
+    "chi2": "45.93",
+    "df": "8",
+    "p": "<.001***",
+    "v": "0.22"
+   },
+   "notes": [
+    "열 = 의사소통-국어 체감 난이도 그룹(1=매우 어렵다~5=매우 쉽다를 3그룹화), 행 = 해당 영역 성취 등급",
+    "체감 난이도는 값이 높을수록 '쉽다'",
+    "검정: 카이제곱(기대빈도<5 셀 20%↑ — Fisher/범주통합 권장)",
+    "χ²(8)=45.93, p=<.001***, Cramér's V=0.224",
+    "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+   ]
+  },
+  "ce": {
+   "groups": [
+    "어렵다(1~2)",
+    "보통(3)",
+    "쉽다(4~5)"
+   ],
+   "cats": [
+    "1등급",
+    "2등급",
+    "3등급",
+    "4등급",
+    "5등급"
+   ],
+   "pct": {
+    "1등급": [
+     20.5,
+     52.5,
+     84.8
+    ],
+    "2등급": [
+     30.1,
+     34.0,
+     13.5
+    ],
+    "3등급": [
+     24.7,
+     7.8,
+     1.6
+    ],
+    "4등급": [
+     16.4,
+     4.3,
+     0.0
+    ],
+    "5등급": [
+     8.2,
+     1.4,
+     0.0
+    ]
+   },
+   "n": [
+    73,
+    141,
+    244
+   ],
+   "stats": {
+    "chi2": "161.53",
+    "df": "8",
+    "p": "<.001***",
+    "v": "0.42"
+   },
+   "notes": [
+    "열 = 의사소통-영어 체감 난이도 그룹(1=매우 어렵다~5=매우 쉽다를 3그룹화), 행 = 해당 영역 성취 등급",
+    "체감 난이도는 값이 높을수록 '쉽다'",
+    "검정: 카이제곱(기대빈도<5 셀 20%↑ — Fisher/범주통합 권장)",
+    "χ²(8)=161.53, p=<.001***, Cramér's V=0.420",
+    "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+   ]
+  },
+  "ma": {
+   "groups": [
+    "어렵다(1~2)",
+    "보통(3)",
+    "쉽다(4~5)"
+   ],
+   "cats": [
+    "1등급",
+    "2등급",
+    "3등급",
+    "4등급",
+    "5등급"
+   ],
+   "pct": {
+    "1등급": [
+     34.0,
+     62.2,
+     83.7
+    ],
+    "2등급": [
+     34.0,
+     29.1,
+     14.0
+    ],
+    "3등급": [
+     17.0,
+     2.6,
+     1.9
+    ],
+    "4등급": [
+     12.8,
+     5.1,
+     0.5
+    ],
+    "5등급": [
+     2.1,
+     1.0,
+     0.0
+    ]
+   },
+   "n": [
+    47,
+    196,
+    215
+   ],
+   "stats": {
+    "chi2": "75.8",
+    "df": "8",
+    "p": "<.001***",
+    "v": "0.29"
+   },
+   "notes": [
+    "열 = 수리활용 체감 난이도 그룹(1=매우 어렵다~5=매우 쉽다를 3그룹화), 행 = 해당 영역 성취 등급",
+    "체감 난이도는 값이 높을수록 '쉽다'",
+    "검정: 카이제곱(기대빈도<5 셀 20%↑ — Fisher/범주통합 권장)",
+    "χ²(8)=75.80, p=<.001***, Cramér's V=0.288",
+    "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+   ]
+  },
+  "el": {
+   "groups": [
+    "어렵다(1~2)",
+    "보통(3)",
+    "쉽다(4~5)"
+   ],
+   "cats": [
+    "1등급",
+    "2등급",
+    "3등급",
+    "4등급",
+    "5등급"
+   ],
+   "pct": {
+    "1등급": [
+     49.5,
+     61.6,
+     74.8
+    ],
+    "2등급": [
+     26.3,
+     22.2,
+     17.7
+    ],
+    "3등급": [
+     5.3,
+     7.9,
+     2.7
+    ],
+    "4등급": [
+     13.7,
+     6.0,
+     3.4
+    ],
+    "5등급": [
+     5.3,
+     2.3,
+     1.4
+    ]
+   },
+   "n": [
+    95,
+    216,
+    147
+   ],
+   "stats": {
+    "chi2": "25.09",
+    "df": "8",
+    "p": ".002**",
+    "v": "0.17"
+   },
+   "notes": [
+    "열 = 문제해결 체감 난이도 그룹(1=매우 어렵다~5=매우 쉽다를 3그룹화), 행 = 해당 영역 성취 등급",
+    "체감 난이도는 값이 높을수록 '쉽다'",
+    "검정: 카이제곱",
+    "χ²(8)=25.09, p=.002**, Cramér's V=0.165",
+    "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+   ]
+  }
+ },
+ "easy_improve": {
+  "cols": [
+   "'지나치게 쉬웠다' 선택(%)",
+   "'지나치게 어려웠다' 선택(%)",
+   "'평가 시간 부족' 선택(%)",
+   "'개선 필요 없음' 선택(%)"
+  ],
+  "rows": [
+   {
+    "grp": "어렵다(1~2)",
+    "vals": [
+     4.3,
+     21.7,
+     26.1,
+     17.4
+    ],
+    "n": 23
+   },
+   {
+    "grp": "보통(3)",
+    "vals": [
+     2.9,
+     1.9,
+     10.7,
+     54.4
+    ],
+    "n": 103
+   },
+   {
+    "grp": "쉽다(4~5)",
+    "vals": [
+     19.3,
+     3.0,
+     9.9,
+     39.8
+    ],
+    "n": 332
+   },
+   {
+    "grp": "전체",
+    "vals": [
+     14.8,
+     3.7,
+     10.9,
+     41.9
+    ],
+    "n": 458
+   }
+  ],
+  "notes": [
+   "합성 난이도 = 4개 영역 난이도 응답의 개인별 평균 → 3그룹화(어렵다 1~2/보통 3/쉽다 4~5)",
+   "선택률 = 각 그룹 내 개선요구(복수응답) 문자열에 해당 보기가 포함된 응답자 비율",
+   "분모 = 그룹 내 개선요구 유효응답(빈값 제외)",
+   "'지나치게 쉬웠다' 선택 여부 × 난이도그룹 카이제곱: χ²(2)=18.76, p=<.001***"
+  ]
+ },
+ "time_pref": {
+  "groups": [
+   "전체",
+   "어렵다(1~2)",
+   "보통(3)",
+   "쉽다(4~5)"
+  ],
+  "cats": [
+   "30분 미만",
+   "30~40분",
+   "40~50분",
+   "50~60분",
+   "60~70분",
+   "기타(서술)"
+  ],
+  "pct": {
+   "30분 미만": [
+    5.9,
+    8.7,
+    9.7,
+    4.5
+   ],
+   "30~40분": [
+    17.9,
+    17.4,
+    18.4,
+    17.8
+   ],
+   "40~50분": [
+    28.6,
+    17.4,
+    26.2,
+    30.1
+   ],
+   "50~60분": [
+    33.8,
+    39.1,
+    35.9,
+    32.8
+   ],
+   "60~70분": [
+    11.1,
+    17.4,
+    7.8,
+    11.7
+   ],
+   "기타(서술)": [
+    2.6,
+    0.0,
+    1.9,
+    3.0
+   ]
+  },
+  "n": [
+   458,
+   23,
+   103,
+   332
+  ],
+  "stats": {},
+  "notes": [
+   "G_Q10: 1과목(50문항) 기준 적정 검사시간 — 구간 1~5 외 서술 응답은 '기타(서술)' 처리",
+   "열 = 체감 난이도(합성) 3그룹, '전체' 열은 난이도 결측 포함 전체 분포",
+   "검정(구간 1~5만, 기타 제외): χ²(8)=7.71, p=.463, Cramér's V=0.093",
+   "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001"
+  ]
+ },
+ "domain_corr": {
+  "labels": [
+   "의사소통-국어",
+   "의사소통-영어",
+   "수리활용",
+   "문제해결"
+  ],
+  "cells": [
+   [
+    "1",
+    "",
+    "",
+    ""
+   ],
+   [
+    ".64***",
+    "1",
+    "",
+    ""
+   ],
+   [
+    ".56***",
+    ".54***",
+    "1",
+    ""
+   ],
+   [
+    ".65***",
+    ".61***",
+    ".62***",
+    "1"
+   ]
+  ]
+ },
+ "top_overlap": {
+  "cols": [
+   "의사소통-국어",
+   "의사소통-영어",
+   "수리활용",
+   "문제해결"
+  ],
+  "rows": [
+   {
+    "base": "의사소통-국어",
+    "n": 309,
+    "vals": [
+     100.0,
+     82.8,
+     85.4,
+     82.8
+    ]
+   },
+   {
+    "base": "의사소통-영어",
+    "n": 296,
+    "vals": [
+     87.1,
+     100.0,
+     85.5,
+     82.8
+    ]
+   },
+   {
+    "base": "수리활용",
+    "n": 318,
+    "vals": [
+     83.3,
+     79.6,
+     100.0,
+     80.8
+    ]
+   },
+   {
+    "base": "문제해결",
+    "n": 290,
+    "vals": [
+     88.6,
+     84.5,
+     88.6,
+     100.0
+    ]
+   }
+  ]
+ },
+ "top_count_summary": {
+  "all4_n": 216,
+  "all4_pct": 47.4,
+  "n": 456
+ }
+}
+</script>
+
+<script>
+"use strict";
+/* ===== 임베드 데이터 로드 (외부 fetch 없음) ===== */
+var DATA = JSON.parse(document.getElementById('dashdata').textContent);
+
+/* ===== 상수 ===== */
+var DOMAINS = [['kc','의사소통-국어'],['ce','의사소통-영어'],['ma','수리활용'],['el','문제해결']];
+var DOMAIN_SHORT = {kc:'국어', ce:'영어', ma:'수리', el:'문제해결'};
+var AXES = [['gender','성별'],['age','연령대'],['edu','학력'],['sido','시도']];
+var GRADES = ['1','2','3','4','5'];
+var GRADE_LAB = ['1등급','2등급','3등급','4등급','5등급'];
+/* 단색 순차(진함=1등급) */
+var GRADE_COLORS = ['#16385c','#33628d','#5f8cb8','#9fbdd8','#dbe6f1'];
+/* 기초/보통/우수 */
+var LVL_BASIC='#dbe6f1', LVL_MID='#6f9bc4', LVL_HIGH='#16385c';
+
+/* ===== 유틸 ===== */
+function navyBg(ratio){
+  ratio = Math.max(0, Math.min(1, ratio));
+  var r = Math.round(255 + (22-255)*ratio);
+  var g = Math.round(255 + (56-255)*ratio);
+  var b = Math.round(255 + (92-255)*ratio);
+  return 'rgb('+r+','+g+','+b+')';
+}
+function txtColor(ratio){ return ratio > 0.52 ? '#ffffff' : '#22303d'; }
+function starClass(p){
+  var s = (String(p).match(/\*/g)||[]).length;
+  return 's'+s;
+}
+function fmt1(x){ return (Math.round(x*10)/10).toFixed(1); }
+
+/* ===== KPI ===== */
+(function(){
+  if(!document.getElementById('kpiRow')) return;
+  var cards = [
+    {cls:'primary', lab:'유효 응답자 수', val:DATA.overview.n, unit:'명', foot:'직기초 인식 설문참여 수'},
+    {lab:'국어 1등급 비율', d:'kc'}, {lab:'영어 1등급 비율', d:'ce'},
+    {lab:'수리 1등급 비율', d:'ma'}, {lab:'문제해결 1등급 비율', d:'el'}
+  ];
+  var html = cards.map(function(c){
+    if(c.d){
+      var rows = DATA.achievement_dist[c.d];
+      var v = rows[0].pct, f = rows[0].freq;
+      var nd = rows.reduce(function(s,r){return s + r.freq;}, 0);
+      return '<div class="kpi"><div class="lab">'+c.lab+'</div>'
+        + '<div class="val">'+fmt1(v)+'<small>%</small></div>'
+        + '<div class="foot">1등급 '+f+'명 / N='+nd+'</div></div>';
+    }
+    return '<div class="kpi '+(c.cls||'')+'"><div class="lab">'+c.lab+'</div>'
+      + '<div class="val">'+c.val+'<small>'+c.unit+'</small></div>'
+      + '<div class="foot">'+c.foot+'</div></div>';
+  }).join('');
+  document.getElementById('kpiRow').innerHTML = html;
+})();
+
+/* ===== Chart.js 준비 ===== */
+var HAS_CHART = (typeof Chart !== 'undefined');
+if(HAS_CHART && typeof ChartDataLabels !== 'undefined'){ Chart.register(ChartDataLabels); }
+if(HAS_CHART){
+  Chart.defaults.font.family = '"Malgun Gothic","맑은 고딕",sans-serif';
+  Chart.defaults.font.size = 11;
+  Chart.defaults.color = '#3a4a58';
+}
+
+/* 100% 누적 가로막대 공통 옵션 */
+function stackedOpts(){
+  return {
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    scales:{
+      x:{stacked:true, min:0, max:100, ticks:{callback:function(v){return v+'%';}}, grid:{color:'#eef1f5'}},
+      y:{stacked:true, grid:{display:false}}
+    },
+    plugins:{
+      legend:{display:false},
+      tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': '+fmt1(ctx.parsed.x)+'%';}}},
+      datalabels:{
+        color:function(ctx){ return ctx.datasetIndex<=1 ? '#fff' : '#22303d'; },
+        font:{size:10, weight:600},
+        formatter:function(v){ return v>=6 ? fmt1(v) : ''; }
+      }
+    }
+  };
+}
+function gradeDatasets(pctByGrade, categoriesCount){
+  return GRADES.map(function(g,i){
+    var arr = [];
+    for(var k=0;k<categoriesCount;k++){ arr.push(pctByGrade[g] ? pctByGrade[g][k] : pctByGrade[GRADE_LAB[i]][k]); }
+    return {label:GRADE_LAB[i], data:arr, backgroundColor:GRADE_COLORS[i], borderWidth:1, borderColor:'#fff'};
+  });
+}
+function gradeLegend(el){
+  el.innerHTML = GRADE_LAB.map(function(l,i){
+    return '<span class="it"><span class="sw" style="background:'+GRADE_COLORS[i]+'"></span>'+l+'</span>';
+  }).join('');
+}
+
+/* ===== 섹션1: 영역별 분포 ===== */
+(function(){
+  if(!document.getElementById('t_dist')) return;
+  var cats = DOMAINS.map(function(d){return d[1];});
+  var pctByGrade = {};
+  GRADES.forEach(function(g,i){
+    pctByGrade[g] = DOMAINS.map(function(d){ return DATA.achievement_dist[d[0]][i].pct; });
+  });
+  if(HAS_CHART){
+    new Chart(document.getElementById('c_dist'), {
+      type:'bar',
+      data:{labels:cats, datasets:gradeDatasets(pctByGrade, cats.length)},
+      options:stackedOpts()
+    });
+  }
+  gradeLegend(document.getElementById('lg_grade'));
+  // table
+  var h = '<table class="dt"><thead><tr><th>영역</th>'
+    + GRADE_LAB.map(function(l){return '<th>'+l+'</th>';}).join('') + '<th>계</th></tr></thead><tbody>';
+  DOMAINS.forEach(function(d){
+    var rows = DATA.achievement_dist[d[0]];
+    h += '<tr><th>'+d[1]+'</th>';
+    rows.forEach(function(r,i){
+      h += '<td'+(i===0?' class="hi"':'')+'>'+fmt1(r.pct)+'<br><span style="font-size:9.5px;color:#9aa7b4">('+r.freq+')</span></td>';
+    });
+    var ndom = rows.reduce(function(s,r){return s + r.freq;}, 0);
+    h += '<td>100.0<br><span style="font-size:9.5px;color:#9aa7b4">(N='+ndom+')</span></td></tr>';
+  });
+  h += '</tbody></table>';
+  document.getElementById('t_dist').innerHTML = h;
+})();
+
+/* ===== 섹션2-1: 등급×하위영역 히트맵 (순수 HTML) ===== */
+var LS_FINDINGS = {
+  kc: '<b>(국어)</b> — <b>1등급은 하위영역 우수 성취기준 비율 90~99%로 균일</b>하나, <b>2등급부터 문서작성(34.7%)·언어구사(37.5%)가 큰 폭으로 감소함.</b><br> '
+    + '경청은 3등급에서도 51.0%로 하락이 가장 완만<br>문서작성·언어구사가 등급을 가르는 변별 하위영역.<br>',
+  ce: '<b>(영어)</b> — <b>1등급은 전 하위영역 98.6~100%로 사실상 만점 프로파일</b>. 2등급에서도 문서이해는 98.1%로 유지되는 반면 '
+    + '<b>언어구사(62.1%)·문서작성(71.8%)의 하락 폭이 큼.</b><br> 3등급 이하는 전 하위영역이 40% 미만으로 하락.',
+  ma: '<b>(수리)</b> — 1등급 안에서도 하위영역 격차 존재(기초통계 98.4% vs <b>도표분석 81.4%</b>). '
+    + '<b>2등급에서 도표분석 20.4%·기초연산 40.8%로 큰 폭으로 감소함</b><br> 도표분석이 가장 취약한 변별 하위영역.',
+  el: '<b>(문제해결)</b> — 1등급은 자원관리·정보활용·기술활용이 99~100%인 반면 <b>시스템적사고만 88.6%로 낮음.</b><br> '
+    + '반대로 3~4등급에서는 시스템적사고의 우수 성취기준 비율(50.0%·32.3%)이 가장 높아 <b>다른 하위영역과 상반된 패턴</b>.'
+};
+function renderLS(dom){
+  var d = DATA.supp_level_substen[dom];
+  document.getElementById('narrLS').innerHTML = LS_FINDINGS[dom]
+    + ' <span style="color:var(--muted)"></span>';
+  var h = '<table class="hm"><thead><tr><th style="width:70px">등급＼하위영역</th>'
+    + d.cols.map(function(c){return '<th>'+c+'</th>';}).join('') + '<th style="width:52px">N</th></tr></thead><tbody>';
+  d.rows.forEach(function(r){
+    var isTot = (r.grade==='전체');
+    h += '<tr><th'+(isTot?' style="background:#dfe7f0"':'')+'>'+r.grade+'</th>';
+    r.vals.forEach(function(v){
+      var ratio = v/100;
+      h += '<td style="background:'+navyBg(ratio)+';color:'+txtColor(ratio)+'">'+fmt1(v)+'</td>';
+    });
+    h += '<td class="na" style="background:#eef2f7!important;color:#5b6b7a!important;font-weight:600">'+r.n+'</td></tr>';
+  });
+  h += '</tbody></table>';
+  document.getElementById('hmLS').innerHTML = h;
+}
+(function(){
+  if(!document.getElementById('tabsLS')) return;
+  var tabs = DOMAINS.map(function(d,i){
+    return '<button class="tab'+(i===0?' on':'')+'" data-d="'+d[0]+'">'+d[1]+'</button>';
+  }).join('');
+  var box = document.getElementById('tabsLS');
+  box.innerHTML = tabs;
+  box.addEventListener('click', function(e){
+    var b = e.target.closest('.tab'); if(!b) return;
+    box.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
+    b.classList.add('on'); renderLS(b.getAttribute('data-d'));
+  });
+  renderLS('kc');
+})();
+
+/* ===== 섹션2-2: 하위영역 16개 분포 ===== */
+(function(){
+  if(!document.getElementById('t_substen')) return;
+  var rows = DATA.supp_substen_dist;
+  var labels = rows.map(function(r){ return r.sub; });
+  // 대영역 밴드(시작·끝 인덱스) — 왼쪽 대영역 라벨·영역 구분선용
+  var bands = [];
+  rows.forEach(function(r,i){
+    var last = bands[bands.length-1];
+    if(!last || last.name !== r.domain){ bands.push({name:r.domain, start:i, end:i}); }
+    else { last.end = i; }
+  });
+  var domainBandPlugin = {
+    id:'domainBands',
+    afterDraw:function(chart){
+      var y = chart.scales.y, area = chart.chartArea, ctx = chart.ctx;
+      ctx.save();
+      bands.forEach(function(b, bi){
+        if(bi > 0){ // 영역 사이 구분선 (캔버스 왼쪽 끝 ~ 차트 오른쪽 끝)
+          var yl = (y.getPixelForValue(b.start-1) + y.getPixelForValue(b.start)) / 2;
+          ctx.strokeStyle = '#8fb0cf'; ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(0, yl); ctx.lineTo(area.right, yl); ctx.stroke();
+        }
+        var yc = (y.getPixelForValue(b.start) + y.getPixelForValue(b.end)) / 2;
+        ctx.fillStyle = '#16385c';
+        ctx.font = '700 12px "Malgun Gothic","맑은 고딕",sans-serif';
+        ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+        ctx.fillText(b.name, 4, yc);
+      });
+      ctx.restore();
+    }
+  };
+  if(HAS_CHART){
+    new Chart(document.getElementById('c_substen'), {
+      type:'bar',
+      data:{labels:labels, datasets:[
+        {label:'우수', data:rows.map(function(r){return r.high;}), backgroundColor:LVL_HIGH, borderColor:'#fff', borderWidth:1},
+        {label:'보통', data:rows.map(function(r){return r.mid;}), backgroundColor:LVL_MID, borderColor:'#fff', borderWidth:1},
+        {label:'기초', data:rows.map(function(r){return r.basic;}), backgroundColor:LVL_BASIC, borderColor:'#fff', borderWidth:1}
+      ]},
+      options:(function(){var o=stackedOpts(); o.layout={padding:{left:100}}; o.plugins.datalabels.color=function(ctx){return ctx.datasetIndex===0?'#fff':'#22303d';}; o.plugins.datalabels.formatter=function(v){return v>=8?fmt1(v):'';}; return o;})(),
+      plugins:[domainBandPlugin]
+    });
+  }
+  document.getElementById('lg_level3').innerHTML =
+    '<span class="it"><span class="sw" style="background:'+LVL_HIGH+'"></span>우수</span>'
+   +'<span class="it"><span class="sw" style="background:'+LVL_MID+'"></span>보통</span>'
+   +'<span class="it"><span class="sw" style="background:'+LVL_BASIC+'"></span>기초</span>';
+  // table grouped by domain
+  var h = '<table class="dt"><thead><tr><th>영역</th><th>하위영역</th><th>기초</th><th>보통</th><th>우수</th><th>N</th></tr></thead><tbody>';
+  var prev=null;
+  rows.forEach(function(r){
+    var domCell = (r.domain!==prev) ? '<th rowspan="4" style="vertical-align:middle">'+r.domain+'</th>' : '';
+    prev = r.domain;
+    h += '<tr>'+domCell+'<th>'+r.sub+'</th><td>'+fmt1(r.basic)+'</td><td>'+fmt1(r.mid)+'</td><td class="hi">'+fmt1(r.high)+'</td><td>'+r.n+'</td></tr>';
+  });
+  h += '</tbody></table>';
+  document.getElementById('t_substen').innerHTML = h;
+})();
+
+/* ===== 섹션3-1: 효과크기 매트릭스 ===== */
+(function(){
+  if(!document.getElementById('hmES')) return;
+  var h = '<table class="hm"><thead><tr><th style="width:110px">영역＼특성</th>'
+    + AXES.map(function(a){return '<th>'+a[1]+'</th>';}).join('') + '</tr></thead><tbody>';
+  DOMAINS.forEach(function(d){
+    h += '<tr><th>'+d[1]+'</th>';
+    AXES.forEach(function(a){
+      var st = DATA.by_demo[d[0]][a[0]].stats;
+      var v = parseFloat(st.v);
+      var ratio = v/0.40;
+      var stars = (String(st.p).match(/\*/g)||[]).join('');
+      h += '<td style="background:'+navyBg(ratio)+';color:'+txtColor(ratio)+'">'+v.toFixed(2).replace('0.','.')
+        + '<span style="font-size:10px">'+stars+'</span></td>';
+    });
+    h += '</tr>';
+  });
+  h += '</tbody></table>';
+  document.getElementById('hmES').innerHTML = h;
+})();
+
+/* ===== 섹션3-2: 시도×영역 1등급 비율 ===== */
+(function(){
+  if(!document.getElementById('hmSido')) return;
+  var sidoNames = DATA.by_demo.kc.sido.groups;
+  var sidoN = DATA.by_demo.ma.sido.n; // 대표 N (열 머리)
+  var h = '<table class="hm"><thead><tr><th style="width:100px">영역＼시도</th>'
+    + sidoNames.map(function(s,i){
+        var na = (sidoN[i] <= 1);
+        return '<th'+(na?' style="opacity:.6"':'')+'>'+s+'<span class="n">N='+sidoN[i]+'</span></th>';
+      }).join('') + '</tr></thead><tbody>';
+  DOMAINS.forEach(function(d){
+    h += '<tr><th>'+d[1]+'</th>';
+    var arr = DATA.by_demo[d[0]].sido.pct['1'];
+    sidoNames.forEach(function(s,i){
+      if(sidoN[i] <= 1){
+        h += '<td class="na">'+fmt1(arr[i])+'</td>';
+      } else {
+        var ratio = arr[i]/100;
+        h += '<td style="background:'+navyBg(ratio)+';color:'+txtColor(ratio)+'">'+fmt1(arr[i])+'</td>';
+      }
+    });
+    h += '</tr>';
+  });
+  h += '</tbody></table>';
+  document.getElementById('hmSido').innerHTML = h;
+})();
+
+/* ===== 섹션3-3: 수도권/비수도권 2×2 패널 ===== */
+(function(){
+  if(!document.getElementById('capPanels')) return;
+  // 비수도권 전용 팔레트(웜톤) — 수도권(네이비)과 집단 구분
+  var CAP_COLORS2 = ['#7a3e12','#a55f24','#c98a4e','#e2b98d','#f4e3cf'];
+  var host = document.getElementById('capPanels');
+  DOMAINS.forEach(function(d){
+    var cd = DATA.supp_capital[d[0]];
+    var st = cd.stats;
+    var sc = starClass(st.p);
+    var panel = document.createElement('div');
+    panel.className='panel';
+    panel.innerHTML = '<h4>'+d[1]+'</h4>'
+      + '<div class="badge">χ²('+st.df+')=<b>'+st.chi2+'</b> · p=<b class="sig '+sc+'">'+st.p+'</b> · Cramér\'s V=<b>'+st.v+'</b></div>'
+      + '<div class="chart-holder" style="height:120px"><canvas id="cap_'+d[0]+'"></canvas></div>';
+    host.appendChild(panel);
+    var capLabels = cd.groups.map(function(g,gi){ return g+' (N='+cd.n[gi]+')'; });
+    if(HAS_CHART){
+      var capDs = GRADES.map(function(g,i){
+        return {label:GRADE_LAB[i], data:cd.pct[GRADE_LAB[i]].slice(),
+                backgroundColor:function(ctx){ return ctx.dataIndex===0 ? GRADE_COLORS[i] : CAP_COLORS2[i]; },
+                borderWidth:1, borderColor:'#fff'};
+      });
+      new Chart(panel.querySelector('canvas'), {
+        type:'bar',
+        data:{labels:capLabels, datasets:capDs},
+        options:(function(){var o=stackedOpts(); o.scales.x.ticks.display=true; return o;})()
+      });
+    } else {
+      // 폴백: 간이 표
+      var t='<table class="dt" style="margin-top:6px"><thead><tr><th>집단</th>'+GRADE_LAB.map(function(l){return '<th>'+l+'</th>';}).join('')+'<th>N</th></tr></thead><tbody>';
+      cd.groups.forEach(function(g,gi){ t+='<tr><th>'+g+'</th>'+cd.grades.map(function(gr){return '<td>'+fmt1(cd.pct[gr][gi])+'</td>';}).join('')+'<td>'+cd.n[gi]+'</td></tr>'; });
+      t+='</tbody></table>';
+      panel.querySelector('.chart-holder').outerHTML=t;
+    }
+  });
+  document.getElementById('lg_grade2').innerHTML =
+    '<span class="it" style="font-weight:700">수도권</span>'
+    + GRADE_LAB.map(function(l,i){ return '<span class="it"><span class="sw" style="background:'+GRADE_COLORS[i]+'"></span>'+l+'</span>'; }).join('')
+    + '<span class="it" style="font-weight:700;margin-left:16px">비수도권</span>'
+    + GRADE_LAB.map(function(l,i){ return '<span class="it"><span class="sw" style="background:'+CAP_COLORS2[i]+'"></span>'+l+'</span>'; }).join('');
+})();
+
+/* ===== 섹션3-4: 상세 교차표 뷰어 — 특성 축 선택 시 4개 영역 전부 세로 배치 ===== */
+var viewerCharts = [];
+function viewerTableHTML(dd){
+  var h = '<table class="dt"><thead><tr><th>집단</th>'
+    + GRADE_LAB.map(function(l){return '<th>'+l+'</th>';}).join('') + '<th>N</th></tr></thead><tbody>';
+  dd.groups.forEach(function(g,gi){
+    h += '<tr><th>'+g+'</th>';
+    GRADES.forEach(function(gr,i){ h += '<td'+(i===0?' class="hi"':'')+'>'+fmt1(dd.pct[gr][gi])+'</td>'; });
+    h += '<td>'+dd.n[gi]+'</td></tr>';
+  });
+  return h + '</tbody></table>';
+}
+function renderViewer(axis){
+  var axisLab = AXES.filter(function(a){return a[0]===axis;})[0][1];
+  viewerCharts.forEach(function(c){ c.destroy(); });
+  viewerCharts = [];
+  var h = '';
+  DOMAINS.forEach(function(d){
+    var dom = d[0], dd = DATA.by_demo[dom][axis];
+    var st = dd.stats, sc = starClass(st.p);
+    var holderH = Math.max(120, dd.groups.length*38 + 60);
+    h += '<div style="margin:14px 0 24px">'
+      + '<div class="badge"><b>'+DOMAIN_SHORT[dom]+'</b> × '+axisLab
+      + ' &nbsp;|&nbsp; χ²('+st.df+')=<b>'+st.chi2+'</b> · p=<b class="sig '+sc+'">'+st.p+'</b> · Cramér\'s V=<b>'+st.v+'</b></div>'
+      + '<div class="cg"><div class="chartbox">'
+      + '<div class="chart-holder" style="height:'+holderH+'px">'
+      + (HAS_CHART ? '<canvas id="c_v_'+dom+'"></canvas>'
+                   : '<div class="fallback" style="display:block">차트 라이브러리(Chart.js) 로드 실패. 우측 표로 수치 확인 가능.</div>')
+      + '</div></div>'
+      + '<div><div class="tbl-cap">[표] '+DOMAIN_SHORT[dom]+' × '+axisLab+' 교차표 (열 100%, 단위: %)</div>'
+      + viewerTableHTML(dd) + '</div></div>'
+      + '<div class="note-fn">'+(dd.notes||[]).map(function(n){return '· '+n;}).join('<br>')+'</div>'
+      + '</div>';
+  });
+  document.getElementById('viewerPanels').innerHTML = h;
+  if(HAS_CHART){
+    DOMAINS.forEach(function(d){
+      var dom = d[0], dd = DATA.by_demo[dom][axis];
+      var ds = GRADES.map(function(g,i){
+        return {label:GRADE_LAB[i], data:dd.pct[g].slice(), backgroundColor:GRADE_COLORS[i], borderColor:'#fff', borderWidth:1};
+      });
+      viewerCharts.push(new Chart(document.getElementById('c_v_'+dom),
+        {type:'bar', data:{labels:dd.groups, datasets:ds}, options:stackedOpts()}));
+    });
+  }
+}
+(function(){
+  if(!document.getElementById('selAxis')) return;
+  var curA='gender';
+  var aHost=document.getElementById('selAxis');
+  aHost.innerHTML = AXES.map(function(a){return '<button class="tab'+(a[0]===curA?' on':'')+'" data-v="'+a[0]+'">'+a[1]+'</button>';}).join('');
+  aHost.addEventListener('click', function(e){var b=e.target.closest('.tab'); if(!b)return; aHost.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');}); b.classList.add('on'); curA=b.getAttribute('data-v'); renderViewer(curA);});
+  gradeLegend(document.getElementById('lg_grade3'));
+  renderViewer(curA);
+})();
+
+/* ===== 섹션1: 응답자 특성 (순수 HTML 세그먼트 막대) ===== */
+(function(){
+  if(!document.getElementById('demoBars')) return;
+  function demoColor(i,n){
+    var t = n<=1 ? 0 : i/(n-1);
+    var r=Math.round(31+(191-31)*t), g=Math.round(94+(224-94)*t), b=Math.round(99+(226-99)*t);
+    return {bg:'rgb('+r+','+g+','+b+')', txt: t<0.45 ? '#ffffff' : '#20343a'};
+  }
+  var demo = DATA.demographics;
+  var order = ['성별','연령대','학력','시도'];
+  var bars='', tbl='<table class="dt"><thead><tr><th>특성</th><th>구분</th><th>빈도(명)</th><th>비율(%)</th></tr></thead><tbody>';
+  order.forEach(function(key){
+    var arr = demo[key];
+    bars += '<div class="demo-row"><div class="dlab">'+key+'</div><div class="demo-bar">';
+    arr.forEach(function(o,i){
+      var c = demoColor(i, arr.length);
+      var lab = (o.pct>=7) ? (o.cat+' '+fmt1(o.pct)+'%') : '';
+      bars += '<div class="demo-seg" title="'+o.cat+' '+fmt1(o.pct)+'% ('+o.freq+'명)" style="width:'+o.pct+'%;background:'+c.bg+';color:'+c.txt+'">'+lab+'</div>';
+    });
+    bars += '</div></div>';
+    arr.forEach(function(o,i){
+      tbl += '<tr>'+(i===0?'<th rowspan="'+arr.length+'" style="vertical-align:middle">'+key+'</th>':'')
+        + '<th style="font-weight:500">'+o.cat+'</th><td>'+o.freq+'</td><td class="hi">'+fmt1(o.pct)+'</td></tr>';
+    });
+  });
+  tbl += '</tbody></table>';
+  document.getElementById('demoBars').innerHTML = bars;
+  document.getElementById('demoTable').innerHTML = tbl;
+})();
+
+/* ===== 섹션5-1: 성취수준별 인식 프로파일 (라인) ===== */
+(function(){
+  if(!document.getElementById('t_att')) return;
+  var A = DATA.att_by_ach;
+  var ATT_COLORS = ['#0f4c5c','#2f8f8f','#5aa9b0','#c58a3a'];
+  var labels = A.levels.map(function(g){return g+'등급';});
+  if(HAS_CHART){
+    new Chart(document.getElementById('c_att'), {
+      type:'line',
+      data:{labels:labels, datasets:A.items.map(function(it,idx){
+        return {label:it.item, data:it.means.slice(), borderColor:ATT_COLORS[idx], backgroundColor:ATT_COLORS[idx],
+                tension:.2, borderWidth:2, pointRadius:3, pointHoverRadius:5};
+      })},
+      options:{responsive:true, maintainAspectRatio:false,
+        scales:{y:{min:1, max:5, ticks:{stepSize:1, callback:function(v){return v+'점';}}, grid:{color:'#eef1f5'}}, x:{grid:{display:false}}},
+        plugins:{legend:{display:false},
+          tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': '+ctx.parsed.y.toFixed(2)+'점';}}},
+          datalabels:{align:'top', offset:3, color:function(ctx){return ATT_COLORS[ctx.datasetIndex];},
+            font:{size:9, weight:600}, formatter:function(v){return v.toFixed(2);}}}}
+    });
+  }
+  document.getElementById('lg_att').innerHTML = A.items.map(function(it,i){
+    return '<span class="it"><span class="sw" style="background:'+ATT_COLORS[i]+'"></span>'+it.item+'</span>';}).join('');
+  document.getElementById('badge_att').innerHTML = A.items.map(function(it){
+    var sc = starClass(it.p);
+    return '<span class="badge" style="margin:3px 5px 3px 0"><b>'+it.item+'</b> '+it.stat+', p=<b class="sig '+sc+'">'+it.p+'</b>, '+it.effect+'</span>';
+  }).join('');
+  var h = '<table class="dt"><thead><tr><th>문항</th>'+labels.map(function(l){return '<th>'+l+'</th>';}).join('')
+    + '<th>검정통계</th><th>p</th><th>효과크기</th></tr></thead><tbody>';
+  A.items.forEach(function(it){
+    h += '<tr><th>'+it.item+'</th>';
+    it.means.forEach(function(m,i){ h += '<td>'+m.toFixed(2)+'<br><span style="font-size:9px;color:#9aa7b4">('+it.sds[i].toFixed(2)+')</span></td>'; });
+    var sc = starClass(it.p);
+    h += '<td>'+it.stat+'</td><td class="sig '+sc+'">'+it.p+'</td><td>'+it.effect+'</td></tr>';
+  });
+  h += '</tbody></table>';
+  document.getElementById('t_att').innerHTML = h;
+})();
+
+/* ===== 섹션5-2: 응시경험별 수용성 (그룹 막대) ===== */
+(function(){
+  if(!document.getElementById('t_acc')) return;
+  var A = DATA.acc_by_exp;
+  var GC = ['#a9c7cc','#0f4c5c']; // 없음, 있음
+  var items = A.items.map(function(it){return it.item;});
+  if(HAS_CHART){
+    new Chart(document.getElementById('c_acc'), {
+      type:'bar',
+      data:{labels:items, datasets:A.groups.map(function(g,gi){
+        return {label:'경험 '+g, data:A.items.map(function(it){return it.means[gi];}), backgroundColor:GC[gi], borderColor:'#fff', borderWidth:1};
+      })},
+      options:{responsive:true, maintainAspectRatio:false,
+        scales:{y:{min:1, max:5, ticks:{stepSize:1, callback:function(v){return v+'점';}}, grid:{color:'#eef1f5'}}, x:{grid:{display:false}}},
+        plugins:{legend:{display:false},
+          tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': '+ctx.parsed.y.toFixed(2)+'점';}}},
+          datalabels:{anchor:'end', align:'top', color:'#22303d', font:{size:9, weight:600}, formatter:function(v){return v.toFixed(2);}}}}
+    });
+  }
+  document.getElementById('lg_acc').innerHTML = A.groups.map(function(g,i){
+    return '<span class="it"><span class="sw" style="background:'+GC[i]+'"></span>경험 '+g+'</span>';}).join('');
+  document.getElementById('badge_acc').innerHTML = A.items.map(function(it){
+    var sc = starClass(it.p);
+    return '<span class="badge" style="margin:3px 5px 3px 0"><b>'+it.item+'</b> '+it.stat+', p=<b class="sig '+sc+'">'+it.p+'</b>, '+it.effect+'</span>';
+  }).join('');
+  var EXP_N = {'없음':377, '있음':81}; // 공공기관 채용시험 응시 여부(있다 81/없다 377)
+  var h = '<table class="dt"><thead><tr><th>문항</th>'+A.groups.map(function(g){
+      return '<th>경험 '+g+'<span style="display:block;font-size:9.5px;color:var(--muted);font-weight:400">(N='+EXP_N[g]+')</span></th>';
+    }).join('')
+    + '<th>검정통계</th><th>p</th><th>효과크기</th></tr></thead><tbody>';
+  A.items.forEach(function(it){
+    h += '<tr><th>'+it.item+'</th>';
+    it.means.forEach(function(m,i){ h += '<td>'+m.toFixed(2)+'<br><span style="font-size:9px;color:#9aa7b4">('+it.sds[i].toFixed(2)+')</span></td>'; });
+    var sc = starClass(it.p);
+    h += '<td>'+it.stat+'</td><td class="sig '+sc+'">'+it.p+'</td><td>'+it.effect+'</td></tr>';
+  });
+  h += '</tbody></table>';
+  document.getElementById('t_acc').innerHTML = h;
+})();
+
+/* ===== 섹션5-3: 응시의향 영향요인 (β 가로막대) ===== */
+(function(){
+  if(!document.getElementById('t_reg')) return;
+  var R = DATA.intent_regression;
+  var rows = R.rows.filter(function(r){return r['var'] !== '(상수)';});
+  var sorted = rows.slice().sort(function(a,b){return parseFloat(b.beta)-parseFloat(a.beta);});
+  var isSig = function(p){return /\*/.test(p);};
+  if(HAS_CHART){
+    new Chart(document.getElementById('c_reg'), {
+      type:'bar',
+      data:{labels:sorted.map(function(r){return r['var'];}),
+        datasets:[{label:'β', data:sorted.map(function(r){return parseFloat(r.beta);}),
+          backgroundColor:sorted.map(function(r){return isSig(r.p)?'#16385c':'#b9c2cc';}), borderColor:'#fff', borderWidth:1}]},
+      options:{indexAxis:'y', responsive:true, maintainAspectRatio:false,
+        scales:{x:{grid:{color:'#eef1f5'}, suggestedMin:-0.1, suggestedMax:0.42, title:{display:true, text:'표준화계수 β'}}, y:{grid:{display:false}}},
+        plugins:{legend:{display:false},
+          tooltip:{callbacks:{label:function(ctx){return 'β='+ctx.parsed.x.toFixed(2);}}},
+          datalabels:{anchor:'end', align:function(ctx){return parseFloat(sorted[ctx.dataIndex].beta)<0?'start':'end';},
+            color:function(ctx){return isSig(sorted[ctx.dataIndex].p)?'#16385c':'#8a97a4';}, font:{size:10, weight:600},
+            formatter:function(v,ctx){var r=sorted[ctx.dataIndex]; var s=(String(r.p).match(/\*/g)||[]).join(''); return v.toFixed(2)+s;}}}}
+    });
+  }
+  document.getElementById('lg_reg').innerHTML =
+    '<span class="it"><span class="sw" style="background:#16385c"></span>유의(p&lt;.05)</span>'
+   +'<span class="it"><span class="sw" style="background:#b9c2cc"></span>비유의</span>';
+  document.getElementById('badge_reg').innerHTML =
+    '다중회귀(OLS) · R&sup2;=<b>.381</b> · F(11,446)=<b>24.93</b>, p=<b class="sig s3">&lt;.001***</b> · N=458';
+  var h = '<table class="dt"><thead><tr><th>독립변수</th><th>B</th><th>SE</th><th>β</th><th>t</th><th>p</th><th>VIF</th></tr></thead><tbody>';
+  R.rows.forEach(function(r){
+    var sc = starClass(r.p);
+    h += '<tr><th style="font-weight:500">'+r['var']+'</th><td>'+r.B+'</td><td>'+r.SE+'</td><td class="hi">'+r.beta
+       + '</td><td>'+r.t+'</td><td class="sig '+sc+'">'+r.p+'</td><td>'+r.vif+'</td></tr>';
+  });
+  h += '</tbody></table>';
+  document.getElementById('t_reg').innerHTML = h;
+  document.getElementById('notes_reg').innerHTML = R.notes.map(function(n){return '· '+n;}).join('<br>');
+})();
+
+/* ===== 섹션5-4: 주요 변수 상관 (HTML 히트맵, 하삼각) ===== */
+(function(){
+  if(!document.getElementById('hmCorr')) return;
+  var C = DATA.correlation, vars = C.vars, r = C.r, n = vars.length;
+  function fmtR(v){ var s=(v<0?'-':'')+Math.abs(v).toFixed(2); return s.replace(/^(-?)0\./, '$1.'); }
+  var h = '<table class="hm"><thead><tr><th style="width:170px;text-align:left">변수＼번호</th>';
+  for(var j=0;j<n;j++){ h += '<th>'+(j+1)+'</th>'; }
+  h += '</tr></thead><tbody>';
+  for(var i=0;i<n;i++){
+    h += '<tr><th style="text-align:left">'+(i+1)+'. '+vars[i]+'</th>';
+    for(var k=0;k<n;k++){
+      if(k>i){ h += '<td style="background:#ffffff;border-color:#f0f2f5"></td>'; }
+      else if(k===i){ h += '<td style="background:#e7eaee;color:#9aa7b4;font-weight:400">1.00</td>'; }
+      else {
+        var val = r[i][k], ratio = Math.abs(val);
+        h += '<td style="background:'+navyBg(ratio)+';color:'+txtColor(ratio)+'">'+fmtR(val)+'</td>';
+      }
+    }
+    h += '</tr>';
+  }
+  h += '</tbody></table>';
+  document.getElementById('hmCorr').innerHTML = h;
+  document.getElementById('notes_corr').innerHTML = C.note;
+})();
+
+/* ===== 섹션5-5: 영역별 체감난이도 × 등급 (탭 전환) ===== */
+function renderDG(dom){
+  var dg = DATA.diff_grade[dom];
+  var st = dg.stats, sc = starClass(st.p);
+  document.getElementById('badge_dg').innerHTML =
+    '<b>'+DOMAIN_SHORT[dom]+'</b> 체감난이도 × 등급 &nbsp;|&nbsp; χ²('+st.df+')=<b>'+st.chi2+'</b> · p=<b class="sig '+sc+'">'+st.p+'</b> · Cramér\'s V=<b>'+st.v+'</b>';
+  if(HAS_CHART){
+    if(window._dgChart){ window._dgChart.destroy(); }
+    window._dgChart = new Chart(document.getElementById('c_dg'), {
+      type:'bar',
+      data:{labels:dg.groups, datasets:gradeDatasets(dg.pct, dg.groups.length)},
+      options:(function(){var o=stackedOpts(); o.scales.x.ticks.display=true; return o;})()
+    });
+  }
+  var h = '<table class="dt"><thead><tr><th>등급＼난이도</th>'
+    + dg.groups.map(function(g,ci){
+        return '<th>'+g+'<span style="display:block;font-size:9.5px;color:var(--muted);font-weight:400">(N='+dg.n[ci]+')</span></th>';
+      }).join('') + '</tr></thead><tbody>';
+  GRADE_LAB.forEach(function(gl,gi){
+    h += '<tr><th>'+gl+'</th>';
+    dg.groups.forEach(function(g,ci){ h += '<td'+(gi===0?' class="hi"':'')+'>'+fmt1(dg.pct[gl][ci])+'</td>'; });
+    h += '</tr>';
+  });
+  h += '<tr><th>합계</th>'+dg.groups.map(function(){return '<td style="font-weight:700">100.0</td>';}).join('')+'</tr></tbody></table>';
+  document.getElementById('t_dg').innerHTML = h;
+  document.getElementById('cap_dg').textContent = '[표] '+DOMAIN_SHORT[dom]+' 난이도그룹 × 등급 (각 열이 100%가 되는 세로 백분율, 단위: %)';
+}
+(function(){
+  if(!document.getElementById('tabsDG')) return;
+  var box = document.getElementById('tabsDG');
+  box.innerHTML = DOMAINS.map(function(d,i){
+    return '<button class="tab'+(i===0?' on':'')+'" data-d="'+d[0]+'">'+d[1]+'</button>';}).join('');
+  box.addEventListener('click', function(e){
+    var b=e.target.closest('.tab'); if(!b) return;
+    box.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
+    b.classList.add('on'); renderDG(b.getAttribute('data-d'));
+  });
+  gradeLegend(document.getElementById('lg_dg'));
+  renderDG('kc');
+})();
+
+/* 5-6(개선요구)·5-7(적정시간)은 설문조사 응답결과 대시보드(survey_dashboard.html)로 이동 */
+/* ===== (이동) 난이도 그룹별 개선요구 선택률 (그룹 막대) ===== */
+(function(){
+  if(!document.getElementById('c_ei')) return;
+  var EI = DATA.easy_improve;
+  var shortCols = ['지나치게 쉬웠다','지나치게 어려웠다','시간 부족','개선 필요 없음'];
+  var chartRows = EI.rows.filter(function(r){return r.grp !== '전체';});
+  var GC = ['#b06a2c','#8fb0cf','#16385c']; // 어렵다 / 보통 / 쉽다
+  if(HAS_CHART){
+    new Chart(document.getElementById('c_ei'), {
+      type:'bar',
+      data:{labels:shortCols, datasets:chartRows.map(function(r,ri){
+        return {label:r.grp, data:r.vals.slice(), backgroundColor:GC[ri], borderColor:'#fff', borderWidth:1};
+      })},
+      options:{responsive:true, maintainAspectRatio:false,
+        scales:{y:{min:0, ticks:{callback:function(v){return v+'%';}}, grid:{color:'#eef1f5'}}, x:{grid:{display:false}}},
+        plugins:{legend:{display:false},
+          tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': '+fmt1(ctx.parsed.y)+'%';}}},
+          datalabels:{anchor:'end', align:'top', color:'#22303d', font:{size:9, weight:600}, formatter:function(v){return v>=2?fmt1(v):'';}}}}
+    });
+  }
+  document.getElementById('lg_ei').innerHTML = chartRows.map(function(r,i){
+    return '<span class="it"><span class="sw" style="background:'+GC[i]+'"></span>'+r.grp+'</span>';}).join('');
+  var h = '<table class="dt"><thead><tr><th>난이도 그룹</th>'
+    + shortCols.map(function(c){return '<th>'+c+'</th>';}).join('') + '<th>N</th></tr></thead><tbody>';
+  EI.rows.forEach(function(r){
+    h += '<tr><th>'+r.grp+'</th>'+r.vals.map(function(v){return '<td>'+fmt1(v)+'</td>';}).join('')+'<td>'+r.n+'</td></tr>';
+  });
+  h += '</tbody></table>';
+  document.getElementById('t_ei').innerHTML = h;
+  document.getElementById('notes_ei').innerHTML = EI.notes.map(function(n){return '· '+n;}).join('<br>');
+})();
+
+/* ===== (이동) 난이도 그룹별 적정 검사시간 (100% 누적 가로막대) ===== */
+(function(){
+  if(!document.getElementById('c_tp')) return;
+  var TP = DATA.time_pref;
+  var TIME_COLORS = ['#16385c','#33628d','#5f8cb8','#9fbdd8','#cbdcec','#b9c2cc']; // 5 순차 + 기타(서술) 회색
+  var ds = TP.cats.map(function(cat,ci){
+    return {label:cat, data:TP.groups.map(function(g,gi){return TP.pct[cat][gi];}),
+            backgroundColor:TIME_COLORS[ci] || '#b9c2cc', borderColor:'#fff', borderWidth:1};
+  });
+  if(HAS_CHART){
+    new Chart(document.getElementById('c_tp'), {
+      type:'bar',
+      data:{labels:TP.groups, datasets:ds},
+      options:(function(){var o=stackedOpts(); o.scales.x.ticks.display=true; return o;})()
+    });
+  }
+  document.getElementById('lg_tp').innerHTML = TP.cats.map(function(c,i){
+    return '<span class="it"><span class="sw" style="background:'+(TIME_COLORS[i]||'#b9c2cc')+'"></span>'+c+'</span>';}).join('');
+  var h = '<table class="dt"><thead><tr><th>난이도＼시간</th>'
+    + TP.cats.map(function(c){return '<th>'+c+'</th>';}).join('') + '<th>N</th></tr></thead><tbody>';
+  TP.groups.forEach(function(g,gi){
+    h += '<tr><th>'+g+'</th>'+TP.cats.map(function(c){return '<td>'+fmt1(TP.pct[c][gi])+'</td>';}).join('')+'<td>'+TP.n[gi]+'</td></tr>';
+  });
+  h += '</tbody></table>';
+  document.getElementById('t_tp').innerHTML = h;
+  document.getElementById('notes_tp').innerHTML = TP.notes.map(function(n){return '· '+n;}).join('<br>')
+    + '<br>· 원변수명 fee_amount이나 실제 문항은 적정 검사시간.';
+})();
+
+
+/* ===== 섹션3-3: 영역 간 등급 일치 (순수 HTML 히트맵) ===== */
+(function(){
+  if(!document.getElementById('hmDC')) return;
+  function shortName(s){ return String(s).replace('의사소통-',''); }
+  // (a) Spearman ρ 하삼각
+  var DC = DATA.domain_corr;
+  var h = '<table class="hm"><thead><tr><th style="width:110px">영역</th>'
+    + DC.labels.map(function(_,i){return '<th style="width:56px">'+(i+1)+'</th>';}).join('') + '</tr></thead><tbody>';
+  DC.labels.forEach(function(lab, i){
+    h += '<tr><th>'+(i+1)+'. '+shortName(lab)+'</th>';
+    DC.cells[i].forEach(function(c, j){
+      if(i === j){ h += '<td class="na">1</td>'; }
+      else if(!c){ h += '<td style="background:#fff"></td>'; }
+      else {
+        var v = parseFloat(c);
+        h += '<td style="background:'+navyBg(v)+';color:'+txtColor(v)+'">'+c+'</td>';
+      }
+    });
+    h += '</tr>';
+  });
+  h += '</tbody></table>';
+  document.getElementById('hmDC').innerHTML = h;
+
+  // (b) 기준 1등급 → 타 영역 1등급 비율
+  var TO = DATA.top_overlap;
+  var h2 = '<table class="hm"><thead><tr><th style="width:96px">기준 집단＼타 영역</th>'
+    + TO.cols.map(function(c){return '<th>'+shortName(c)+' 1등급</th>';}).join('') + '</tr></thead><tbody>';
+  TO.rows.forEach(function(r, i){
+    h2 += '<tr><th>'+shortName(r.base)+' 1등급<span style="display:block;font-size:9.5px;color:var(--muted);font-weight:400">(N='+r.n+')</span></th>';
+    r.vals.forEach(function(v, j){
+      if(i === j){ h2 += '<td class="na">100</td>'; }
+      else {
+        var ratio = Math.max(0, Math.min(1, (v-60)/40));  // 79~89% 구간 대비 확보
+        h2 += '<td style="background:'+navyBg(ratio)+';color:'+txtColor(ratio)+'">'+fmt1(v)+'</td>';
+      }
+    });
+    h2 += '</tr>';
+  });
+  h2 += '</tbody></table>';
+  document.getElementById('hmTO').innerHTML = h2;
+})();
+
+/* CDN 실패 안내 (히트맵/표는 정상) */
+window.addEventListener('load', function(){
+  if(typeof Chart === 'undefined'){
+    document.querySelectorAll('.chart-holder').forEach(function(el){
+      el.innerHTML = '<div class="fallback" style="display:block">차트 라이브러리(Chart.js) 로드 실패. 우측/하단의 데이터 표와 히트맵으로 모든 수치 확인 가능.</div>';
+    });
+  }
+});
+</script>
+
+<!-- 우측 도킹 목차 + TOP 버튼 (페이지 공통) -->
+<script>
+(function(){
+  var secs = Array.prototype.slice.call(document.querySelectorAll('section.block'));
+  if(secs.length){
+    var toc = document.createElement('nav');
+    toc.className = 'side-toc';
+    var links = [];
+    toc.innerHTML = '<div class="tc-t">이 페이지 목차</div>';
+    secs.forEach(function(sec, i){
+      var h = sec.querySelector('h2'); if(!h) return;
+      var id = 'sec-' + (i+1);
+      sec.id = sec.id || id;
+      var a = document.createElement('a');
+      a.href = '#' + sec.id;
+      a.textContent = h.textContent.replace(/\s+/g,' ').trim();
+      toc.appendChild(a); links.push([sec, a]);
+    });
+    document.body.appendChild(toc);
+    function spy(){
+      var y = window.scrollY + 130, cur = null;
+      links.forEach(function(p){ if(p[0].offsetTop <= y) cur = p[1]; });
+      links.forEach(function(p){ p[1].classList.toggle('on', p[1] === cur); });
+    }
+    window.addEventListener('scroll', spy, {passive:true}); spy();
+  }
+  var btn = document.createElement('button');
+  btn.id = 'topBtn'; btn.title = '맨 위로'; btn.textContent = 'TOP';
+  btn.addEventListener('click', function(){ window.scrollTo({top:0, behavior:'smooth'}); });
+  document.body.appendChild(btn);
+  window.addEventListener('scroll', function(){
+    btn.style.display = window.scrollY > 400 ? 'block' : 'none';
+  }, {passive:true});
+})();
+</script>
+</body>
+</html>
