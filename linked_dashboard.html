@@ -273,7 +273,7 @@
     </div>
     <div class="note-fn">체감 난이도 = 4개 영역(국어·영어·수리·문제해결) 응답의 개인별 평균(합성 점수). 척도 방향: 1=매우 어렵다 ~ 5=매우 쉽다(값이 높을수록 쉽다고 체감). 사후검정(Dunn) 미산출. 척도: 1~5점. 집단 = 종합 성취수준(1~5등급), 전체 유효응답 N=458.</div>
 
-    <div class="sub-h">5-2. 응시경험별 수용성</div>
+    <div class="sub-h" id="sec5-2" style="scroll-margin-top:20px">5-2. 응시경험별 수용성</div>
     <div class="narr">NCS 인지도는 관련 경험 여부에 따라 큰 차이를 보임 — 경험자 3.58 vs 무경험 2.39(d=1.21). <br>응시의향 자체는 경험과 무관(p=.158) — 응시 의향이 단순한 경험 유무보다 NCS 기반 채용에 대한 인식 수준과 더 밀접하게 관련됨을 보여주며, <br>해당 관계는 5-4절의 회귀분석 결과와 연결하여 해석할 수 있음</div>
     <div class="cg">
       <div class="chartbox">
@@ -286,6 +286,25 @@
         <div id="t_acc"></div>
       </div>
     </div>
+
+    <div class="sub-h" id="sec5-2b" style="scroll-margin-top:20px">5-2b. 연령대별 수용성</div>
+    <div class="narr" id="narr_accage">연령대(20대 이하 · 30대 · 40대 이상)별 수용성 4개 문항 비교.
+      <b>산출 대기</b> — <code>analyze_supplement_acc_by_age.py</code> 실행 후 acc_by_age.json을 임베드하면 차트·표가 표시됩니다.</div>
+    <div class="cg" id="wrap_accage" style="display:none">
+      <div class="chartbox">
+        <div class="chart-holder"><canvas id="c_accage" height="240"></canvas></div>
+        <div id="lg_accage" class="legend"></div>
+        <div id="badge_accage" style="margin-top:8px"></div>
+      </div>
+      <div>
+        <div class="tbl-cap">[표] 연령대별 M(SD)·검정 (단위: 점)</div>
+        <div id="t_accage"></div>
+      </div>
+    </div>
+    <div class="note-fn" id="notes_accage"></div>
+
+    <div class="note-fn">연령대별 응시 경험(있다/없다) 교차분석은 설문 문항 간 분석이므로
+      <a href="survey_dashboard.html#sec6-1" target="_blank" style="color:#b06a2c;font-weight:600">설문조사 응답결과 대시보드의 6-1</a>로 이동함.</div>
 
     <div class="sub-h">5-3. 주요 변수 상관 (Pearson r)</div>
     <div class="narr">응시 의향은 인증 효용과 가장 높은 상관을 보였으며(r=.53), 직무 관련성 인식과도 비교적 높은 관련성이 확인됨(r=.44).<br> 이는 응시 의향과 함께 변화하는 주요 인식 요인을 개괄적으로 보여주는 결과이며, 각 요인의 상대적 영향력은 5-4절의 회귀분석에서 구체적으로 검토함.<br> 진로·구직 태도와 평가 인식 간 상관은 모두(r&lt;.25)로 낮게 나타나 두 영역이 상이한 구상개념 반영</div>
@@ -307,6 +326,36 @@
       </div>
     </div>
     <div class="note-fn" id="notes_reg"></div>
+
+    <div class="sub-h" id="sec5-4b" style="scroll-margin-top:20px">5-4b. 응시의향 영향요인 — SHAP 기여도 (비모수 보완)</div>
+    <div class="badge" id="badge_shap" style="display:none"></div>
+    <div class="narr" id="narr_shap">종속변수(확대 도입 응시의향)가 5점 척도인 점을 감안해, OLS의 선형·등간 가정 없이
+      그래디언트 부스팅 + SHAP(TreeExplainer)으로 영향요인의 상대적 기여도를 재검증하는 섹션.
+      <b>산출 대기</b> — <code>analyze_supplement_shap.py</code> 실행 후 shap_intent.json을 임베드하면 차트·표가 표시됩니다.</div>
+    <div class="cg" id="wrap_shap" style="display:none">
+      <div class="chartbox">
+        <div class="chart-holder"><canvas id="c_shap" height="360"></canvas></div>
+        <div id="lg_shap" class="legend"></div>
+      </div>
+      <div>
+        <div class="tbl-cap">[표] SHAP 평균 절대 기여도 × OLS β 비교 (종속=확대 도입 응시의향)</div>
+        <div id="t_shap"></div>
+      </div>
+    </div>
+    <div class="cg" id="wrap_shapdep" style="display:none">
+      <div class="chartbox">
+        <div class="tbl-cap" style="margin-top:0">[그림] 주요 인식 변수의 응답값별 SHAP 기여 (dependence, 집계)</div>
+        <div class="chart-holder"><canvas id="c_shapdep" height="240"></canvas></div>
+        <div id="lg_shapdep" class="legend"></div>
+      </div>
+      <div>
+        <div class="tbl-cap">읽는 법</div>
+        <div class="narr" style="margin-top:0">선이 오른쪽 위로 갈수록 — 해당 문항에 높게 응답할수록 응시의향 예측값을 끌어올린다는 뜻.
+          y=0 기준선 위는 의향을 높이는 방향, 아래는 낮추는 방향의 기여.
+          SHAP 값 단위는 응시의향 점수(5점 척도)와 동일.</div>
+      </div>
+    </div>
+    <div class="note-fn" id="notes_shap"></div>
 
     <div class="sub-h">5-5. 영역별 체감 난이도 × 해당 영역 등급 (체감 난이도와 실제 성적의 일치)</div>
     <div class="tabs" id="tabsDG"></div>
@@ -2295,6 +2344,478 @@
    }
   ]
  },
+ "acc_by_age": {
+ "groups": [
+  "20대 이하",
+  "30대",
+  "40대 이상"
+ ],
+ "group_n": {
+  "20대 이하": 280,
+  "30대": 143,
+  "40대 이상": 35
+ },
+ "items": [
+  {
+   "item": "NCS 인지도",
+   "means": [
+    2.69,
+    2.5,
+    2.31
+   ],
+   "sds": [
+    1.11,
+    1.05,
+    0.9
+   ],
+   "test": "일원 ANOVA",
+   "stat": "F=2.95",
+   "p": ".053",
+   "effect": "η²=0.013",
+   "posthoc": "유의차 없음"
+  },
+  {
+   "item": "표준화 통합 유용성",
+   "means": [
+    3.64,
+    3.48,
+    3.17
+   ],
+   "sds": [
+    1.01,
+    1.03,
+    1.01
+   ],
+   "test": "일원 ANOVA",
+   "stat": "F=3.97",
+   "p": ".020*",
+   "effect": "η²=0.017",
+   "posthoc": "20대 이하>40대 이상 [Tukey HSD]"
+  },
+  {
+   "item": "확대 도입 응시의향",
+   "means": [
+    3.48,
+    3.43,
+    3.17
+   ],
+   "sds": [
+    0.92,
+    0.87,
+    0.95
+   ],
+   "test": "일원 ANOVA",
+   "stat": "F=1.81",
+   "p": ".164",
+   "effect": "η²=0.008",
+   "posthoc": "유의차 없음"
+  },
+  {
+   "item": "인증 활용 효용",
+   "means": [
+    3.74,
+    3.5,
+    3.17
+   ],
+   "sds": [
+    1.02,
+    0.98,
+    1.15
+   ],
+   "test": "일원 ANOVA",
+   "stat": "F=6.41",
+   "p": ".002**",
+   "effect": "η²=0.027",
+   "posthoc": "20대 이하>40대 이상 [Tukey HSD]"
+  }
+ ],
+ "notes": [
+  "가정점검: 정규성 Shapiro-Wilk, 등분산 Levene → 위반+소표본 시 비모수, 등분산 위반 시 Welch",
+  "효과크기: 2집단 Cohen's d, 3집단+ η²",
+  "유의표기: * p<.05, ** p<.01, *** p<.001 (유의하지 않은 결과도 모두 표기)",
+  "5-2(응시경험별 수용성)와 동일 문항의 연령대 기준 보완표"
+ ]
+},
+ "intent_shap": {
+ "model": {
+  "type": "GradientBoostingRegressor",
+  "n": 458,
+  "n_features": 11,
+  "cv_r2_mean": 0.185,
+  "cv_r2_sd": 0.112,
+  "train_r2": 0.676,
+  "expected_value": 3.434
+ },
+ "importance": [
+  {
+   "feature": "인증 활용 효용",
+   "mean_abs_shap": 0.3163,
+   "dir_r": 0.928
+  },
+  {
+   "feature": "직무 관련성",
+   "mean_abs_shap": 0.1708,
+   "dir_r": 0.921
+  },
+  {
+   "feature": "표준화 통합 유용성",
+   "mean_abs_shap": 0.0947,
+   "dir_r": 0.205
+  },
+  {
+   "feature": "NCS 인지도",
+   "mean_abs_shap": 0.0867,
+   "dir_r": 0.495
+  },
+  {
+   "feature": "연령대_30대",
+   "mean_abs_shap": 0.0618,
+   "dir_r": 0.79
+  },
+  {
+   "feature": "생활 만족도",
+   "mean_abs_shap": 0.0553,
+   "dir_r": 0.502
+  },
+  {
+   "feature": "구직 적극성(6개월 계획)",
+   "mean_abs_shap": 0.0353,
+   "dir_r": -0.2
+  },
+  {
+   "feature": "학력_대졸 이상",
+   "mean_abs_shap": 0.0331,
+   "dir_r": -0.57
+  },
+  {
+   "feature": "성별_여자",
+   "mean_abs_shap": 0.0304,
+   "dir_r": 0.632
+  },
+  {
+   "feature": "학력_전문대졸",
+   "mean_abs_shap": 0.0283,
+   "dir_r": -0.61
+  },
+  {
+   "feature": "연령대_40대 이상",
+   "mean_abs_shap": 0.0141,
+   "dir_r": 0.409
+  }
+ ],
+ "dependence": {
+  "직무 관련성": [
+   {
+    "value": 1,
+    "n": 15,
+    "mean": -0.6967,
+    "q25": -0.7563,
+    "q75": -0.5108
+   },
+   {
+    "value": 2,
+    "n": 34,
+    "mean": -0.2666,
+    "q25": -0.351,
+    "q75": -0.195
+   },
+   {
+    "value": 3,
+    "n": 162,
+    "mean": -0.1287,
+    "q25": -0.1491,
+    "q75": -0.107
+   },
+   {
+    "value": 4,
+    "n": 196,
+    "mean": 0.0624,
+    "q25": 0.0475,
+    "q75": 0.0863
+   },
+   {
+    "value": 5,
+    "n": 51,
+    "mean": 0.481,
+    "q25": 0.3961,
+    "q75": 0.5304
+   }
+  ],
+  "NCS 인지도": [
+   {
+    "value": 1,
+    "n": 62,
+    "mean": 0.0177,
+    "q25": -0.0324,
+    "q75": 0.0926
+   },
+   {
+    "value": 2,
+    "n": 174,
+    "mean": -0.0831,
+    "q25": -0.0968,
+    "q75": -0.0651
+   },
+   {
+    "value": 3,
+    "n": 139,
+    "mean": -0.0168,
+    "q25": -0.031,
+    "q75": -0.0015
+   },
+   {
+    "value": 4,
+    "n": 50,
+    "mean": 0.0442,
+    "q25": 0.012,
+    "q75": 0.067
+   },
+   {
+    "value": 5,
+    "n": 33,
+    "mean": 0.4021,
+    "q25": 0.3389,
+    "q75": 0.4412
+   }
+  ],
+  "인증 활용 효용": [
+   {
+    "value": 1,
+    "n": 18,
+    "mean": -0.3465,
+    "q25": -0.5162,
+    "q75": -0.2029
+   },
+   {
+    "value": 2,
+    "n": 38,
+    "mean": -0.6201,
+    "q25": -0.7694,
+    "q75": -0.4948
+   },
+   {
+    "value": 3,
+    "n": 139,
+    "mean": -0.2617,
+    "q25": -0.2864,
+    "q75": -0.2444
+   },
+   {
+    "value": 4,
+    "n": 168,
+    "mean": 0.1458,
+    "q25": 0.1183,
+    "q75": 0.1678
+   },
+   {
+    "value": 5,
+    "n": 95,
+    "mean": 0.5584,
+    "q25": 0.5172,
+    "q75": 0.6136
+   }
+  ],
+  "표준화 통합 유용성": [
+   {
+    "value": 1,
+    "n": 21,
+    "mean": -0.7754,
+    "q25": -0.9227,
+    "q75": -0.6075
+   },
+   {
+    "value": 2,
+    "n": 38,
+    "mean": -0.0359,
+    "q25": -0.0789,
+    "q75": 0.0177
+   },
+   {
+    "value": 3,
+    "n": 147,
+    "mean": 0.0285,
+    "q25": 0.0032,
+    "q75": 0.0613
+   },
+   {
+    "value": 4,
+    "n": 170,
+    "mean": 0.0686,
+    "q25": 0.0479,
+    "q75": 0.0831
+   },
+   {
+    "value": 5,
+    "n": 82,
+    "mean": -0.04,
+    "q25": -0.1055,
+    "q75": 0.0378
+   }
+  ],
+  "구직 적극성(6개월 계획)": [
+   {
+    "value": 1,
+    "n": 2,
+    "mean": 0.1807,
+    "q25": 0.0564,
+    "q75": 0.3051
+   },
+   {
+    "value": 2,
+    "n": 4,
+    "mean": -0.6494,
+    "q25": -0.682,
+    "q75": -0.612
+   },
+   {
+    "value": 3,
+    "n": 29,
+    "mean": -0.0233,
+    "q25": -0.0725,
+    "q75": 0.0551
+   },
+   {
+    "value": 4,
+    "n": 145,
+    "mean": 0.0171,
+    "q25": 0.0084,
+    "q75": 0.0314
+   },
+   {
+    "value": 5,
+    "n": 278,
+    "mean": 0.0051,
+    "q25": -0.0134,
+    "q75": 0.0129
+   }
+  ],
+  "생활 만족도": [
+   {
+    "value": 1,
+    "n": 8,
+    "mean": -0.5715,
+    "q25": -0.7232,
+    "q75": -0.3641
+   },
+   {
+    "value": 2,
+    "n": 20,
+    "mean": -0.0283,
+    "q25": -0.0931,
+    "q75": 0.0005
+   },
+   {
+    "value": 3,
+    "n": 179,
+    "mean": -0.0256,
+    "q25": -0.048,
+    "q75": 0.008
+   },
+   {
+    "value": 4,
+    "n": 186,
+    "mean": 0.0383,
+    "q25": 0.0135,
+    "q75": 0.0556
+   },
+   {
+    "value": 5,
+    "n": 65,
+    "mean": 0.0308,
+    "q25": -0.0417,
+    "q75": 0.1008
+   }
+  ],
+  "성별_여자": [
+   {
+    "value": 0,
+    "n": 352,
+    "mean": -0.0188,
+    "q25": -0.0243,
+    "q75": -0.0085
+   },
+   {
+    "value": 1,
+    "n": 106,
+    "mean": 0.0588,
+    "q25": 0.0224,
+    "q75": 0.0844
+   }
+  ],
+  "연령대_30대": [
+   {
+    "value": 0,
+    "n": 315,
+    "mean": -0.0449,
+    "q25": -0.0561,
+    "q75": -0.0328
+   },
+   {
+    "value": 1,
+    "n": 143,
+    "mean": 0.0957,
+    "q25": 0.0654,
+    "q75": 0.122
+   }
+  ],
+  "연령대_40대 이상": [
+   {
+    "value": 0,
+    "n": 423,
+    "mean": -0.0073,
+    "q25": -0.01,
+    "q75": -0.0044
+   },
+   {
+    "value": 1,
+    "n": 35,
+    "mean": 0.0843,
+    "q25": 0.0367,
+    "q75": 0.1127
+   }
+  ],
+  "학력_대졸 이상": [
+   {
+    "value": 0,
+    "n": 204,
+    "mean": 0.0212,
+    "q25": 0.0032,
+    "q75": 0.0439
+   },
+   {
+    "value": 1,
+    "n": 254,
+    "mean": -0.0162,
+    "q25": -0.037,
+    "q75": -0.0031
+   }
+  ],
+  "학력_전문대졸": [
+   {
+    "value": 0,
+    "n": 383,
+    "mean": 0.016,
+    "q25": 0.0055,
+    "q75": 0.0235
+   },
+   {
+    "value": 1,
+    "n": 75,
+    "mean": -0.0894,
+    "q25": -0.1145,
+    "q75": -0.0415
+   }
+  ]
+ },
+ "notes": [
+  "종속변수: 확대 도입 응시의향 / N=458",
+  "모형: GradientBoostingRegressor(300 trees, lr=.05, depth=3, subsample=.8)",
+  "5-fold CV R²=0.185(±0.112), train R²=0.676",
+  "SHAP=TreeExplainer. mean|SHAP|=평균 절대 기여도(응시의향 점수 단위), 방향 r=응답값과 SHAP 값의 Spearman 상관(+면 응답이 높을수록 의향을 높이는 방향)",
+  "기준범주: 성별=남자, 연령대=20대 이하, 학력=고졸 이하",
+  "개별 응답행·개별 SHAP 값 미반출 — 응답값별 집계(평균·사분위)만 포함"
+ ]
+},
  "acc_by_exp": {
   "groups": [
    "없음",
@@ -2570,7 +3091,6 @@
    }
   ],
   "notes": [
-   "'채용 활용 유용성(G_Q06)'은 실제 설문에 미출제(해당 자리에 표준화 통합 문항이 중복 게재됨) — 응답 원천이 동일하여 표준화 통합 유용성 단일 변수로 통합",
    "종속변수: 확대 도입 응시의향 / N=458",
    "R²=0.381, adj.R²=0.365, F(11,446)=24.93, p=<.001***",
    "기준범주: 성별=남자, 연령대=20대 이하, 학력=고졸 이하",
@@ -3545,6 +4065,55 @@ function renderViewer(axis){
   document.getElementById('t_acc').innerHTML = h;
 })();
 
+/* ===== 섹션5-2b: 연령대별 수용성 (그룹 막대) — acc_by_age 임베드 시 표시 ===== */
+(function(){
+  if(!document.getElementById('t_accage')) return;
+  var A = DATA.acc_by_age;
+  if(!A){ return; } // 산출 대기 — narr_accage의 안내문 유지
+  document.getElementById('wrap_accage').style.display = '';
+  document.getElementById('narr_accage').innerHTML =
+    '수용성은 연령대가 낮을수록 높은 경향 — <b>인증 활용 효용</b>(F=6.41, p=.002**)과 <b>표준화 통합 유용성</b>(F=3.97, p=.020*)에서'
+    +' 20대 이하가 40대 이상보다 유의하게 높음(Tukey HSD).<br>NCS 인지도(p=.053)와 확대 도입 응시의향(p=.164)은 연령대 간 유의차 없음'
+    +' — 응시의향이 배경 특성보다 인식 변수와 밀접하다는 5-4·5-4b 결과와 일관됨. 40대 이상은 N=35로 해석 주의.';
+  var GC = ['#a9c7cc','#5f8cb8','#0f4c5c'];
+  var items = A.items.map(function(it){return it.item;});
+  if(HAS_CHART){
+    new Chart(document.getElementById('c_accage'), {
+      type:'bar',
+      data:{labels:items, datasets:A.groups.map(function(g,gi){
+        return {label:g, data:A.items.map(function(it){return it.means[gi];}), backgroundColor:GC[gi%GC.length], borderColor:'#fff', borderWidth:1};
+      })},
+      options:{responsive:true, maintainAspectRatio:false,
+        scales:{y:{min:1, max:5, ticks:{stepSize:1, callback:function(v){return v+'점';}}, grid:{color:'#eef1f5'}}, x:{grid:{display:false}}},
+        plugins:{legend:{display:false},
+          tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': '+ctx.parsed.y.toFixed(2)+'점';}}},
+          datalabels:{anchor:'end', align:'top', color:'#22303d', font:{size:9, weight:600}, formatter:function(v){return v==null?'':v.toFixed(2);}}}}
+    });
+  }
+  document.getElementById('lg_accage').innerHTML = A.groups.map(function(g,i){
+    return '<span class="it"><span class="sw" style="background:'+GC[i%GC.length]+'"></span>'+g+'</span>';}).join('');
+  document.getElementById('badge_accage').innerHTML = A.items.map(function(it){
+    var sc = starClass(it.p);
+    return '<span class="badge" style="margin:3px 5px 3px 0"><b>'+it.item+'</b> '+it.stat+', p=<b class="sig '+sc+'">'+it.p+'</b>, '+it.effect+'</span>';
+  }).join('');
+  var h = '<table class="dt"><thead><tr><th>문항</th>'+A.groups.map(function(g){
+      return '<th>'+g+'<span style="display:block;font-size:9.5px;color:var(--muted);font-weight:400">(N='+(A.group_n&&A.group_n[g]!=null?A.group_n[g]:'-')+')</span></th>';
+    }).join('')
+    + '<th>검정통계</th><th>p</th><th>효과크기</th><th>사후</th></tr></thead><tbody>';
+  A.items.forEach(function(it){
+    h += '<tr><th>'+it.item+'</th>';
+    it.means.forEach(function(m,i){
+      var sd = it.sds[i];
+      h += '<td>'+(m==null?'-':m.toFixed(2))+'<br><span style="font-size:9px;color:#9aa7b4">('+(sd==null?'-':sd.toFixed(2))+')</span></td>';
+    });
+    var sc = starClass(it.p);
+    h += '<td>'+it.stat+'</td><td class="sig '+sc+'">'+it.p+'</td><td>'+it.effect+'</td><td style="font-size:10px">'+(it.posthoc||'-')+'</td></tr>';
+  });
+  h += '</tbody></table>';
+  document.getElementById('t_accage').innerHTML = h;
+  if(A.notes){ document.getElementById('notes_accage').innerHTML = A.notes.map(function(n){return '· '+n;}).join('<br>'); }
+})();
+
 /* ===== 섹션5-3: 응시의향 영향요인 (β 가로막대) ===== */
 (function(){
   if(!document.getElementById('t_reg')) return;
@@ -3581,6 +4150,85 @@ function renderViewer(axis){
   h += '</tbody></table>';
   document.getElementById('t_reg').innerHTML = h;
   document.getElementById('notes_reg').innerHTML = R.notes.map(function(n){return '· '+n;}).join('<br>');
+})();
+
+/* ===== 섹션5-4b: 응시의향 SHAP 기여도 — intent_shap 임베드 시 표시 ===== */
+(function(){
+  if(!document.getElementById('t_shap')) return;
+  var S = DATA.intent_shap;
+  if(!S){ return; } // 산출 대기 — narr_shap의 안내문 유지
+  document.getElementById('wrap_shap').style.display = '';
+  document.getElementById('wrap_shapdep').style.display = '';
+  document.getElementById('badge_shap').style.display = '';
+  var M = S.model;
+  document.getElementById('badge_shap').innerHTML =
+    'GBM+SHAP · 5-fold CV R&sup2;=<b>'+M.cv_r2_mean.toFixed(3)+'</b>(&plusmn;'+M.cv_r2_sd.toFixed(3)+')'
+    +' · train R&sup2;=<b>'+M.train_r2.toFixed(3)+'</b> · N='+M.n+' · 기준예측값 '+M.expected_value.toFixed(2)+'점';
+  document.getElementById('narr_shap').innerHTML =
+    '5점 척도 종속변수의 선형·등간 가정을 피한 비모수 재검증(GBM+SHAP). 기여도 순위는'
+    +' <b>인증 활용 효용(0.32) &gt; 직무 관련성(0.17) &gt; 표준화 통합 유용성(0.09) ≈ NCS 인지도(0.09)</b>로'
+    +' OLS β 순위(.36/.23/.10/.12)와 사실상 일치 — 회귀 결론이 모형 가정에 의존하지 않음을 확인.<br>'
+    +'dependence를 보면 인증 효용·직무 관련성은 부정 응답(1~2점)의 감점 폭이 긍정 응답의 가점보다 커 비대칭적이며,'
+    +' 표준화 통합 유용성은 1점에서만 크게 감점되는 문턱형 패턴 — 선형 회귀가 놓치는 비선형 구조.<br>'
+    +'<span style="color:#8a6b52">해석 주의: CV R²=.185는 표본 외 예측력 기준으로, OLS의 R²=.381(표본 내)과 직접 비교 대상이 아님'
+    +' — GBM의 표본 내 R²는 .676. mean|SHAP|은 응시의향 점수 단위, 방향 r(+)는 응답이 높을수록 의향 예측을 높이는 방향.</span>';
+  // OLS β 참고 병기 (변수명 일치 시)
+  var betaOf = {};
+  if(DATA.intent_regression){ DATA.intent_regression.rows.forEach(function(r){ betaOf[r['var']] = {beta:r.beta, p:r.p}; }); }
+  var imp = S.importance;
+  if(HAS_CHART){
+    new Chart(document.getElementById('c_shap'), {
+      type:'bar',
+      data:{labels:imp.map(function(r){return r.feature;}),
+        datasets:[{label:'mean|SHAP|', data:imp.map(function(r){return r.mean_abs_shap;}),
+          backgroundColor:imp.map(function(r){return (r.dir_r!=null&&r.dir_r<0)?'#a2543a':'#16385c';}), borderColor:'#fff', borderWidth:1}]},
+      options:{indexAxis:'y', responsive:true, maintainAspectRatio:false,
+        scales:{x:{grid:{color:'#eef1f5'}, title:{display:true, text:'mean|SHAP| (응시의향 점수 단위)'}}, y:{grid:{display:false}}},
+        plugins:{legend:{display:false},
+          tooltip:{callbacks:{label:function(ctx){var r=imp[ctx.dataIndex]; return 'mean|SHAP|='+ctx.parsed.x.toFixed(3)+(r.dir_r!=null?' · 방향 r='+r.dir_r.toFixed(2):'');}}},
+          datalabels:{anchor:'end', align:'end', color:'#22303d', font:{size:10, weight:600},
+            formatter:function(v){return v.toFixed(3);}}}}
+    });
+  }
+  document.getElementById('lg_shap').innerHTML =
+    '<span class="it"><span class="sw" style="background:#16385c"></span>+ 방향(응답↑ = 의향↑)</span>'
+   +'<span class="it"><span class="sw" style="background:#a2543a"></span>&minus; 방향(응답↑ = 의향↓)</span>';
+  var h = '<table class="dt"><thead><tr><th>독립변수</th><th>mean|SHAP|</th><th>방향 r</th><th>OLS β(참고)</th></tr></thead><tbody>';
+  imp.forEach(function(r){
+    var b = betaOf[r.feature];
+    h += '<tr><th style="font-weight:500">'+r.feature+'</th><td class="hi">'+r.mean_abs_shap.toFixed(3)+'</td>'
+       + '<td>'+(r.dir_r==null?'-':r.dir_r.toFixed(2))+'</td>'
+       + '<td>'+(b?(b.beta+' <span class="sig '+starClass(b.p)+'" style="font-size:9.5px">'+b.p+'</span>'):'-')+'</td></tr>';
+  });
+  h += '</tbody></table>';
+  document.getElementById('t_shap').innerHTML = h;
+  // dependence: 응답값 3개 이상(리커트)인 상위 5개 변수 — 응답값별 mean SHAP 라인
+  var DEP_COLORS = ['#16385c','#0f4c5c','#5f8cb8','#b06a2c','#a2543a'];
+  var depFeats = imp.filter(function(r){
+    var d = S.dependence[r.feature]; return d && d.length >= 3;
+  }).slice(0,5);
+  if(HAS_CHART && depFeats.length){
+    var allVals = [1,2,3,4,5];
+    new Chart(document.getElementById('c_shapdep'), {
+      type:'line',
+      data:{labels:allVals.map(function(v){return v+'점';}),
+        datasets:depFeats.map(function(r,i){
+          var d = S.dependence[r.feature], byVal = {};
+          d.forEach(function(o){ byVal[o.value] = o.mean; });
+          return {label:r.feature, data:allVals.map(function(v){return byVal[v]!=null?byVal[v]:null;}),
+            borderColor:DEP_COLORS[i%DEP_COLORS.length], backgroundColor:DEP_COLORS[i%DEP_COLORS.length],
+            spanGaps:true, tension:0.25, pointRadius:3, fill:false};
+        })},
+      options:{responsive:true, maintainAspectRatio:false,
+        scales:{y:{grid:{color:'#eef1f5'}, title:{display:true, text:'SHAP 평균 기여(점)'}}, x:{grid:{display:false}, title:{display:true, text:'응답값'}}},
+        plugins:{legend:{display:false},
+          tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': '+(ctx.parsed.y==null?'-':ctx.parsed.y.toFixed(3))+'점';}}},
+          datalabels:{display:false}}}
+    });
+    document.getElementById('lg_shapdep').innerHTML = depFeats.map(function(r,i){
+      return '<span class="it"><span class="sw" style="background:'+DEP_COLORS[i%DEP_COLORS.length]+'"></span>'+r.feature+'</span>';}).join('');
+  }
+  if(S.notes){ document.getElementById('notes_shap').innerHTML = S.notes.map(function(n){return '· '+n;}).join('<br>'); }
 })();
 
 /* ===== 섹션5-4: 주요 변수 상관 (HTML 히트맵, 하삼각) ===== */
