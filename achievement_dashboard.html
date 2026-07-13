@@ -203,12 +203,20 @@
     <div class="sec-purpose">직업기초능력평가 모의테스트 및 설문조사 응답자 특성</div>
     <div class="narr">남자 76.9%·20대 이하 61.1%·대졸 이상 55.5% — 젊은 남성·대졸 중심 표본. 시도는 서울(32.8%)·부산(22.5%) 집중, 경남 N=1.</div>
     <div class="cg">
-      <div class="chartbox"><div class="demo-wrap" id="demoBars"></div></div>
+      <div class="chartbox">
+        <div class="demo-wrap" id="demoBars"></div>
+        <div class="tbl-cap" style="margin-top:14px">[표] 학력·전공계열 분포 (단위: 명, %)</div>
+        <div id="demoTableEdu"></div>
+      </div>
       <div>
         <div class="tbl-cap">[표] 응답자 특성별 분포 (단위: 명, %)</div>
         <div id="demoTable"></div>
       </div>
     </div>
+    <div class="note-fn">전공계열: 분모 N=203(전공 응답 157명 + 전공 없음·고졸 이하 46명). <b>미수집 255명은 표시 제외</b> —
+      대학 재학·중퇴·졸업(예정) 이력이 있으나 전공 문항이 수집되지 않은 소스의 응답자로, 무응답이 아닌 구조적 결측.
+      '전공 없음(고졸 이하)' 46명 = 초졸·검정고시·인문/실업고 졸업
+      훈련과정: 27개 과정을 8개 유목으로 분류(매핑표 과정_유목화.csv), N=458.</div>
   </section>
 
   <!-- SECTION 2 (formerly 1) -->
@@ -2066,6 +2074,80 @@
   }
  },
  "demographics": {
+ "전공계열": [
+ {
+  "cat": "공학계열",
+  "freq": 82,
+  "pct": 40.4
+ },
+ {
+  "cat": "인문·사회계열",
+  "freq": 34,
+  "pct": 16.7
+ },
+ {
+  "cat": "자연과학계열",
+  "freq": 18,
+  "pct": 8.9
+ },
+ {
+  "cat": "상경계열",
+  "freq": 11,
+  "pct": 5.4
+ },
+ {
+  "cat": "기타",
+  "freq": 12,
+  "pct": 5.9
+ },
+ {
+  "cat": "전공 없음(고졸 이하)",
+  "freq": 46,
+  "pct": 22.7
+ }
+],
+ "훈련과정": [
+ {
+  "cat": "AI·SW 개발",
+  "freq": 188,
+  "pct": 41
+ },
+ {
+  "cat": "제조·로봇",
+  "freq": 66,
+  "pct": 14.4
+ },
+ {
+  "cat": "조선해양 DX",
+  "freq": 49,
+  "pct": 10.7
+ },
+ {
+  "cat": "반도체",
+  "freq": 46,
+  "pct": 10
+ },
+ {
+  "cat": "기계설계·CAD",
+  "freq": 43,
+  "pct": 9.4
+ },
+ {
+  "cat": "전기·에너지",
+  "freq": 38,
+  "pct": 8.3
+ },
+ {
+  "cat": "정보보안",
+  "freq": 15,
+  "pct": 3.3
+ },
+ {
+  "cat": "용접",
+  "freq": 13,
+  "pct": 2.8
+ }
+],
   "성별": [
    {
     "cat": "남자",
@@ -3374,8 +3456,8 @@ function renderViewer(axis){
     return {bg:'rgb('+r+','+g+','+b+')', txt: t<0.45 ? '#ffffff' : '#20343a'};
   }
   var demo = DATA.demographics;
-  var order = ['성별','연령대','학력','시도'];
-  var bars='', tbl='<table class="dt"><thead><tr><th>특성</th><th>구분</th><th>빈도(명)</th><th>비율(%)</th></tr></thead><tbody>';
+  var order = ['성별','연령대','학력','전공계열','훈련과정','시도'].filter(function(k){return demo[k];});
+  var bars='';
   order.forEach(function(key){
     var arr = demo[key];
     bars += '<div class="demo-row"><div class="dlab">'+key+'</div><div class="demo-bar">';
@@ -3385,14 +3467,23 @@ function renderViewer(axis){
       bars += '<div class="demo-seg" title="'+o.cat+' '+fmt1(o.pct)+'% ('+o.freq+'명)" style="width:'+o.pct+'%;background:'+c.bg+';color:'+c.txt+'">'+lab+'</div>';
     });
     bars += '</div></div>';
-    arr.forEach(function(o,i){
-      tbl += '<tr>'+(i===0?'<th rowspan="'+arr.length+'" style="vertical-align:middle">'+key+'</th>':'')
-        + '<th style="font-weight:500">'+o.cat+'</th><td>'+o.freq+'</td><td class="hi">'+fmt1(o.pct)+'</td></tr>';
-    });
   });
-  tbl += '</tbody></table>';
+  function makeTable(keys){
+    var tbl='<table class="dt"><thead><tr><th>특성</th><th>구분</th><th>빈도(명)</th><th>비율(%)</th></tr></thead><tbody>';
+    keys.forEach(function(key){
+      var arr = demo[key];
+      if(!arr) return;
+      arr.forEach(function(o,i){
+        tbl += '<tr>'+(i===0?'<th rowspan="'+arr.length+'" style="vertical-align:middle">'+key+'</th>':'')
+          + '<th style="font-weight:500">'+o.cat+'</th><td>'+o.freq+'</td><td class="hi">'+fmt1(o.pct)+'</td></tr>';
+      });
+    });
+    return tbl+'</tbody></table>';
+  }
   document.getElementById('demoBars').innerHTML = bars;
-  document.getElementById('demoTable').innerHTML = tbl;
+  document.getElementById('demoTable').innerHTML = makeTable(['성별','연령대','훈련과정','시도']);
+  var eduEl = document.getElementById('demoTableEdu');
+  if(eduEl){ eduEl.innerHTML = makeTable(['학력','전공계열']); }
 })();
 
 /* ===== 섹션5-1: 성취수준별 인식 프로파일 (라인) ===== */
