@@ -4167,11 +4167,11 @@ function renderViewer(axis){
   document.getElementById('narr_shap').innerHTML =
     '5점 척도 종속변수의 선형·등간 가정을 피한 비모수 재검증(GBM+SHAP). 기여도 순위는'
     +' <b>인증 활용 효용(0.32) &gt; 직무 관련성(0.17) &gt; 표준화 통합 유용성(0.09) ≈ NCS 인지도(0.09)</b>로'
-    +' OLS β 순위(.36/.23/.10/.12)와 사실상 일치 — 회귀 결론이 모형 가정에 의존하지 않음을 확인.<br>'
+    +' OLS β 순위(.36/.23/.10/.12)와 사실상 일치<br>'
     +'dependence를 보면 인증 효용·직무 관련성은 부정 응답(1~2점)의 감점 폭이 긍정 응답의 가점보다 커 비대칭적이며,'
-    +' 표준화 통합 유용성은 1점에서만 크게 감점되는 문턱형 패턴 — 선형 회귀가 놓치는 비선형 구조.<br>'
+    +' 표준화 통합 유용성은 1점에서만 크게 감점되는 경함을 확인함.<br>'
     +'<span style="color:#8a6b52">해석 주의: CV R²=.185는 표본 외 예측력 기준으로, OLS의 R²=.381(표본 내)과 직접 비교 대상이 아님'
-    +' — GBM의 표본 내 R²는 .676. mean|SHAP|은 응시의향 점수 단위, 방향 r(+)는 응답이 높을수록 의향 예측을 높이는 방향.</span>';
+    +' <br>GBM의 표본 내 R²는 .676. mean|SHAP|은 응시의향 점수 단위, 방향 r(+)는 응답이 높을수록 의향 예측을 높이는 방향.</span>';
   // OLS β 참고 병기 (변수명 일치 시)
   var betaOf = {};
   if(DATA.intent_regression){ DATA.intent_regression.rows.forEach(function(r){ betaOf[r['var']] = {beta:r.beta, p:r.p}; }); }
