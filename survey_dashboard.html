@@ -348,7 +348,7 @@
       <span class="unit">(단위: %, 명)</span>
     </div>
     <div class="sec-purpose">NCS 기반 공공기관 채용시험 응시 여부와 경험자의 준비 방법(복수응답).</div>
-    <div class="narr">응시 경험자는 <b>17.7%(81명)</b>. 경험자의 준비 방법은 <b>기출문제집·교재(69.1%)</b>가 압도적 1위,
+    <div class="narr">응시 경험자는 <b>17.7%(81명)</b>. 경험자의 준비 방법은 <b>기출문제집·교재(69.1%)</b>가 1위,
       유튜브·SNS 강의(50.6%) &gt; 학원·인터넷 강의(37.0%) 순 — 자기주도·비대면 학습 채널 중심.</div>
     <div class="panel-grid">
       <div class="panel">
@@ -361,6 +361,25 @@
       </div>
     </div>
     <div class="note-fn">준비 방법은 복수응답 — 선택률 합계는 100%를 초과함. 분모 = 응시 경험자 81명.</div>
+
+    <div class="sub-h" id="sec6-1" style="scroll-margin-top:20px">6-1. 연령대별 응시 경험 (심화)</div>
+    <div class="narr" id="narr_expage"></div>
+    <div class="cg">
+      <div class="chartbox">
+        <div class="chart-holder"><canvas id="c_expage" height="220"></canvas></div>
+        <div id="lg_expage" class="legend"></div>
+        <div id="badge_expage" style="margin-top:8px"></div>
+      </div>
+      <div>
+        <div class="tbl-cap">[표] 연령대 × 응시 경험 (열 100%, 단위: %, 명)</div>
+        <div id="t_expage"></div>
+      </div>
+    </div>
+    <div class="note-fn" id="notes_expage"></div>
+
+    <div class="note-fn">응시 경험에 따라 수용성(NCS 인지도·응시의향 등)이 어떻게 다른지는
+      <a href="linked_dashboard.html#sec5-2" style="color:var(--accent);font-weight:600">3. 종합(연계 분석) 페이지의 5-2. 응시경험별 수용성</a>,
+      연령대에 따른 차이는 <a href="linked_dashboard.html#sec5-2b" style="color:var(--accent);font-weight:600">5-2b. 연령대별 수용성</a> 참조.</div>
   </section>
 
   <!-- 7. 직업 가치관·문항 평균 총괄 -->
@@ -406,6 +425,60 @@
 
 <script id="dashdata" type="application/json">
 {
+ "exp_by_age": {
+ "dep": "공공기관 채용시험 응시 경험",
+ "groups": [
+  "20대 이하",
+  "30대",
+  "40대 이상"
+ ],
+ "group_n": {
+  "20대 이하": 280,
+  "30대": 143,
+  "40대 이상": 35
+ },
+ "cats": [
+  "없다",
+  "있다"
+ ],
+ "pct": {
+  "없다": [
+   83.2,
+   78.3,
+   91.4
+  ],
+  "있다": [
+   16.8,
+   21.7,
+   8.6
+  ]
+ },
+ "freq": {
+  "없다": [
+   233,
+   112,
+   32
+  ],
+  "있다": [
+   47,
+   31,
+   3
+  ]
+ },
+ "stats": {
+  "test": "카이제곱",
+  "chi2": 3.72,
+  "df": 2,
+  "p": ".156",
+  "v": 0.09
+ },
+ "notes": [
+  "검정: 카이제곱",
+  "χ²(2)=3.72, p=.156, Cramér's V=0.090",
+  "분모: 각 열(집단) 유효응답 / N행은 미가중 실사례수 / 유의: * p<.05 ** p<.01 *** p<.001",
+  "섹션 6(응시 경험) 심화 — 연령대 기준 보완표"
+ ]
+},
  "n": 458,
  "attitude": [
   {"item":"평가 성실도(읽기 노력)","labels":["전혀 그렇지 않다","그렇지 않다","보통이다","그렇다","매우 그렇다"],
@@ -423,15 +496,15 @@
   ]
  },
  "perception": [
-  {"item":"직무 관련성","labels":["전혀 그렇지 않다","그렇지 않다","보통이다","그렇다","매우 그렇다"],
+  {"item":"직무 관련성","q":"나는 직업기초능력평가 문항이 실제 직무에서 필요한 기본 능력과 관련이 있다고 생각한다.","labels":["전혀 그렇지 않다","그렇지 않다","보통이다","그렇다","매우 그렇다"],
    "freq":[15,34,162,196,51],"pct":[3.3,7.4,35.4,42.8,11.1],"mean":3.51,"n":458},
-  {"item":"NCS 기반 채용 인지도","labels":["전혀 모른다","들어봤지만 잘 모른다","어느 정도 알고 있다","잘 알고 있다","매우 잘 알고 있다"],
+  {"item":"NCS 기반 채용 인지도","q":"나는 공공기관 등에서 운영하는 NCS 기반 채용 필기전형의 직업기초능력평가에 대해 알고 있다.","labels":["전혀 모른다","들어봤지만 잘 모른다","어느 정도 알고 있다","잘 알고 있다","매우 잘 알고 있다"],
    "freq":[62,174,139,50,33],"pct":[13.5,38.0,30.3,10.9,7.2],"mean":2.60,"n":458},
-  {"item":"확대 도입 응시 의향","labels":["전혀 그렇지 않다","그렇지 않다","보통이다","그렇다","매우 그렇다"],
+  {"item":"확대 도입 응시 의향","q":"나는 직업기초능력평가를 성인들을 대상으로 확대하여 운영한다면 응시할 의향이 있다.","labels":["전혀 그렇지 않다","그렇지 않다","보통이다","그렇다","매우 그렇다"],
    "freq":[16,37,181,178,46],"pct":[3.5,8.1,39.5,38.9,10.0],"mean":3.44,"n":458},
-  {"item":"인증(등급제) 활용 효용성","labels":["전혀 그렇지 않다","그렇지 않다","보통이다","그렇다","매우 그렇다"],
+  {"item":"인증(등급제) 활용 효용성","q":"나는 NCS 직업기초능력평가 결과가 등급제 인증 형태(예: OPIc 어학 성적)로 제공되어, 여러 기관 채용에 범용적으로 활용된다면 매우 유용할 것이라고 생각한다.","labels":["전혀 그렇지 않다","그렇지 않다","보통이다","그렇다","매우 그렇다"],
    "freq":[18,38,139,168,95],"pct":[3.9,8.3,30.3,36.7,20.7],"mean":3.62,"n":458},
-  {"item":"표준화 통합 유용성","labels":["전혀 그렇지 않다","그렇지 않다","보통이다","그렇다","매우 그렇다"],
+  {"item":"표준화 통합 유용성","q":"나는 한 번의 NCS 직업기초능력평가 필기전형 결과를 여러 공공기관 채용 전형에 공통적으로 적용한다면, 취업 준비가 보다 수월해질 것이라고 생각한다.","labels":["전혀 그렇지 않다","그렇지 않다","보통이다","그렇다","매우 그렇다"],
    "freq":[21,38,147,170,82],"pct":[4.6,8.3,32.1,37.1,17.9],"mean":3.55,"n":458}
  ],
  "fee": [
@@ -667,7 +740,9 @@ function renderDiff(key){
   likertLegend(document.getElementById('lg_likert2'), DATA.perception[0].labels);
   var h = '<table class="dt"><thead><tr><th>문항</th><th>1(부정)</th><th>2</th><th>3</th><th>4</th><th>5(긍정)</th><th>평균</th><th>N</th></tr></thead><tbody>';
   DATA.perception.forEach(function(it){
-    h += '<tr><th>'+it.item+'</th>';
+    h += '<tr><th style="text-align:left;min-width:220px">'+it.item
+       + (it.q ? '<div style="font-weight:400;font-size:11px;color:#6b7885;margin-top:3px;line-height:1.5">'+it.q+'</div>' : '')
+       + '</th>';
     it.pct.forEach(function(p,i){
       h += '<td'+(i===4?' class="hi"':'')+'>'+fmt1(p)+'<br><span style="font-size:9px;color:#9aa7b4">('+it.freq[i]+')</span></td>';
     });
@@ -772,6 +847,68 @@ function freqTable(el, arr, n){
   hbars(document.getElementById('expBars'), DATA.exp, 100);
   hbars(document.getElementById('prepBars'), DATA.prep, 100);
 })();
+
+/* ===== 6-1. 연령대별 응시 경험 (교차) ===== */
+(function(){
+  if(!document.getElementById('t_expage')) return;
+  var E = DATA.exp_by_age;
+  if(!E){ return; }
+  function starClass(p){ var n=(String(p).match(/\*/g)||[]).length; return 's'+Math.min(n,3); }
+  var st = E.stats || {};
+  var sc = starClass(st.p);
+  var expPct = E.pct['있다'] || [];
+  document.getElementById('narr_expage').innerHTML =
+    '경험자(81명)의 연령 구성은 20대 이하 58.0% · 30대 38.3% · 40대 이상 3.7%로, 무경험자(377명)의 구성(61.8% · 29.7% · 8.5%)과 대체로 비슷함'
+    +'<br>30대가 응시 경험이 다소 더 많으나, 연령대와 응시 경험의 연관은 통계적으로 유의하지 않음(p='+st.p+', V='+(st.v!=null?st.v.toFixed(2):'-')+').'
+    +'<br>연령대별 경험률은 30대 '+expPct[1]+'% &gt; 20대 이하 '+expPct[0]+'% &gt; 40대 이상 '+expPct[2]+'%(경험자 N=3, 해석 주의) — 우측 표 참조.';
+  // 행 100% — 있다/없다 각 집단 내 연령대 구성비 (열 100%는 40대 소표본이 과장되어 보임)
+  var GC = ['#a9c7cc','#5f8cb8','#0f4c5c'];
+  var catTotal = {};
+  E.cats.forEach(function(c){ catTotal[c] = E.freq[c].reduce(function(a,b){return a+b;},0); });
+  var rowPct = {};
+  E.cats.forEach(function(c){ rowPct[c] = E.freq[c].map(function(f){return catTotal[c]?f/catTotal[c]*100:0;}); });
+  var barCats = E.cats.slice().reverse(); // 있다를 위로
+  if(HAS_CHART){
+    new Chart(document.getElementById('c_expage'), {
+      type:'bar',
+      data:{labels:barCats.map(function(c){return '경험 '+c+' (N='+catTotal[c]+')';}),
+        datasets:E.groups.map(function(g,gi){
+          return {label:g, data:barCats.map(function(c){return rowPct[c][gi];}),
+            backgroundColor:GC[gi%GC.length], borderColor:'#fff', borderWidth:1};
+        })},
+      options:{indexAxis:'y', responsive:true, maintainAspectRatio:false,
+        scales:{x:{stacked:true, min:0, max:100, ticks:{callback:function(v){return v+'%';}}, grid:{color:'#eef1f5'}},
+                y:{stacked:true, grid:{display:false}}},
+        interaction:{mode:'index', axis:'y'},
+        plugins:{legend:{display:false},
+          tooltip:{mode:'index', axis:'y',
+            callbacks:{label:function(ctx){
+            var c = barCats[ctx.dataIndex];
+            return ctx.dataset.label+': '+ctx.parsed.x.toFixed(1)+'% ('+E.freq[c][ctx.datasetIndex]+'명)';}}},
+          datalabels:{color:function(ctx){return ctx.datasetIndex===2?'#fff':'#22303d';}, font:{size:10, weight:600},
+            formatter:function(v){return v>=5?v.toFixed(1):'';}}}}
+    });
+  }
+  document.getElementById('lg_expage').innerHTML = E.groups.map(function(g,i){
+    return '<span class="it"><span class="sw" style="background:'+GC[i%GC.length]+'"></span>'+g+'</span>';}).join('');
+  document.getElementById('badge_expage').innerHTML =
+    '<span class="badge">'+(st.test||'검정')+' χ²('+st.df+')=<b>'+st.chi2+'</b> · p=<b class="sig '+sc+'">'+st.p+'</b>'
+    +(st.v!=null?' · Cramér\'s V=<b>'+st.v.toFixed(3)+'</b>':'')+'</span>';
+  var h = '<table class="dt"><thead><tr><th>구분</th>'+E.groups.map(function(g){
+      return '<th>'+g+'<span style="display:block;font-size:9.5px;color:var(--muted);font-weight:400">(N='+E.group_n[g]+')</span></th>';
+    }).join('')+'</tr></thead><tbody>';
+  E.cats.slice().reverse().forEach(function(c){
+    h += '<tr><th>'+c+'</th>'+E.pct[c].map(function(p,i){
+      return '<td'+(c==='있다'?' class="hi"':'')+'>'+p.toFixed(1)+'<br><span style="font-size:9px;color:#9aa7b4">('+E.freq[c][i]+'명)</span></td>';
+    }).join('')+'</tr>';
+  });
+  h += '<tr><th>합계</th>'+E.groups.map(function(g){return '<td style="font-weight:700">100.0</td>';}).join('')+'</tr>';
+  h += '</tbody></table>';
+  document.getElementById('t_expage').innerHTML = h;
+  var expNotes = ['차트 = 행 100%(있다/없다 각 집단 내 연령대 구성비) · 표 = 열 100%(연령대별 있다/없다 비율) — 기준이 다름'].concat(E.notes||[]);
+  document.getElementById('notes_expage').innerHTML = expNotes.map(function(n){return '· '+n;}).join('<br>');
+})();
+
 
 /* ===== 7. 직업 가치관·문항 평균 ===== */
 (function(){
